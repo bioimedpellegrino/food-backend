@@ -1,0 +1,15 @@
+venv/*
+.vscode
+*.pyc
+__pycache__
+.env
+collected_static
+!.gitkeep
+media/*
+!media/.gitkeep
+model
+.sass-cache/
+node_modules/
+!bower.json
+
+*.sqlite3
