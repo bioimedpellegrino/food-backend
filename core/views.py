@@ -59,5 +59,5 @@ class ImageUploadView(APIView):
 class TestView(APIView):
     
     def get(self, request, *args, **kwargs):
-        print(request)
+        print(request.user, request.data)
         return Response({'test'}, status=200)

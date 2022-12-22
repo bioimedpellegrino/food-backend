@@ -19,7 +19,7 @@ from django.conf.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('core/', include('core.urls')),
+    path('api/v1/core/', include('core.urls')),
     
     # Restapi urls
     path('api/v1/rest-auth/', include('rest_auth.urls')),
