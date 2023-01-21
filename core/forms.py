@@ -1,5 +1,5 @@
 from django import forms
-from .models import Food
+from .models import *
 
 
 class FoodForm(forms.ModelForm):
@@ -8,7 +8,7 @@ class FoodForm(forms.ModelForm):
     '''
     class Meta:
         model = Food
-        fields = ['name', 'quantity', 'calories', 'totalfat', 'saturatedfat', 'carbs', 'cholestorol'
+        fields = ['name', 'quantity', 'calories', 'totalfat', 'saturatedfat', 'carbs', 'cholestorol',
                   'sodium', 'fiber', 'sugars', 'protein']
 
     def __init__(self, *args, **kwargs):

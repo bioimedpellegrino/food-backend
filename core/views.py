@@ -10,7 +10,7 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .forms import FoodForm, ImageForm
+from .forms import FoodForm
 from .models import *
 import numpy as np
 import traceback
