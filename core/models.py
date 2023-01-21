@@ -35,6 +35,18 @@ class User(models.Model):
     def __str__(self):
         return f"{self.name} {self.surname}"
 
+class Weight(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    weight = models.DecimalField(max_digits=7, decimal_places=2)
+    entry_date = models.DateField()
+
+    class Meta:
+        verbose_name = 'Weight'
+        verbose_name_plural = 'Weight'
+
+    def __str__(self):
+        return f'{self.user.username} - {self.weight} Kg in data {self.entry_date}'
+
 class Food(models.Model):
     name = models.CharField(max_length=256, choices=FOODS, default='lattuga')
     calories = models.IntegerField(default=0)
@@ -50,6 +62,24 @@ class Food(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+class FoodLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    food_consumed = models.ForeignKey(Food, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Food Log'
+        verbose_name_plural = 'Food Log'
+
+    def __str__(self):
+        return f'{self.user.username} - {self.food_consumed.food_name}'
+
+class Image(models.Model):
+    food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='get_images')
+    image = models.ImageField(upload_to='images/')
+
+    def __str__(self):
+        return f'{self.image}'
 
 class Meal(models.Model):
     id = models.AutoField(primary_key=True)
