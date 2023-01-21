@@ -2,6 +2,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from django import forms
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db import IntegrityError
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from .forms import FoodForm, ImageForm
 from .models import *
 import numpy as np
 import traceback
@@ -61,3 +70,51 @@ class TestView(APIView):
     def get(self, request, *args, **kwargs):
         print(request.user, request.data)
         return Response({'test'}, status=200)
+
+class LoginView(APIView):
+
+    def get(request, *args, **kwargs):
+        return render(request, 'login.html')
+
+    def post(request, *args, **kwargs):
+
+        template_name = 'login.html'
+
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(reverse('test'))
+        else:
+            return render(request, template_name, {
+                'message': 'Invalid username and/or password.',
+            })
+
+class FoodListView(APIView):
+
+    def get(request, *args, **kwargs):
+        foods = Food.objects.all()
+
+        for food in foods:
+            food.image = food.get_images.first()
+
+        return render(request, 'index.html', {
+            'foods': foods,
+            'title': 'Food List'
+        })
+
+class FoodDetailsView(APIView):
+
+    def get(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('login'))
+
+        food_id = kwargs['food_id']
+        food = Food.objects.get(id=food_id)
+
+        return render(request, 'food.html', {
+            'food': food,
+            'images': food.get_images.all(),
+        })

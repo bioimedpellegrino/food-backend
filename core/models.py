@@ -49,6 +49,7 @@ class Weight(models.Model):
 
 class Food(models.Model):
     name = models.CharField(max_length=256, choices=FOODS, default='lattuga')
+    quantity = models.DecimalField(max_digits=7, decimal_places=2, default=100.00)
     calories = models.IntegerField(default=0)
     totalfat = models.IntegerField(default=0)
     saturatedfat = models.IntegerField(default=0)
