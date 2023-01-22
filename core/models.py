@@ -59,7 +59,6 @@ class Food(models.Model):
     fiber = models.IntegerField(default=0)
     sugars = models.IntegerField(default=0)
     protein = models.IntegerField(default=0)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name}"
@@ -74,6 +73,24 @@ class FoodLog(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.food_consumed.food_name}'
+
+class FoodSubstitute(models.Model):
+    name = models.CharField(max_length=256, choices=FOODS, default='lattuga')
+    quantity = models.DecimalField(max_digits=7, decimal_places=2, default=100.00)
+    calories = models.IntegerField(default=0)
+    totalfat = models.IntegerField(default=0)
+    saturatedfat = models.IntegerField(default=0)
+    carbs = models.IntegerField(default=0)
+    cholestorol = models.IntegerField(default=0)
+    sodium = models.IntegerField(default=0)
+    fiber = models.IntegerField(default=0)
+    sugars = models.IntegerField(default=0)
+    protein = models.IntegerField(default=0)
+    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Food Substtute'
+        verbose_name_plural = 'Food Substtute'
 
 class Image(models.Model):
     food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='get_images')

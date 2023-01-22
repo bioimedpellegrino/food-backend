@@ -1,16 +1,13 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from django import forms
 from django.contrib.auth import authenticate, login, logout
+from django.forms.models import model_to_dict
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .forms import FoodForm
 from .models import *
 import numpy as np
 import traceback
@@ -112,8 +109,19 @@ class FoodDetailsView(APIView):
             return HttpResponseRedirect(reverse('login'))
 
         food_id = kwargs['food_id']
-        food = Food.objects.get(id=food_id)
-
+        if food_id:
+            try:
+                food = Food.objects.get(id=food_id)
+                food_data = model_to_dict(food)
+                substitutes = FoodSubstitute.objects.filter(food=food_id)
+                food_data['substitutes'] = [model_to_dict(substitute) for substitute in substitutes]
+            except Exception as e:
+                return JsonResponse({'error': str(e)}, status=404) #Cibo non trovato
+        else:
+            foods = Food.objects.all()
+            foods_list = [model_to_dict(food) for food in foods]
+            return JsonResponse(foods_list, safe=False)
+        
         return render(request, 'food.html', {
             'food': food,
             'images': food.get_images.all(),
