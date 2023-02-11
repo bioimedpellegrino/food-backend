@@ -68,39 +68,17 @@ class TestView(APIView):
         print(request.user, request.data)
         return Response({'test'}, status=200)
 
-class LoginView(APIView):
-
-    def get(request, *args, **kwargs):
-        return render(request, 'login.html')
-
-    def post(request, *args, **kwargs):
-
-        template_name = 'login.html'
-
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse('test'))
-        else:
-            return render(request, template_name, {
-                'message': 'Invalid username and/or password.',
-            })
-
 class FoodListView(APIView):
+    
+    #dalla request prendo il patient (request.user)
+    def get(self, request, *args, **kwargs):
 
-    def get(request, *args, **kwargs):
-        foods = Food.objects.all()
+        request_patient = self.request.query_params.get('patient')
+        user=User.objects.get(username=request_patient)
+        patient = Patient.objects.get(user=User.objects.get(username=user.username))
+        foods = PatientProgram.objects.get(patient=patient).to_json()
 
-        for food in foods:
-            food.image = food.get_images.first()
-
-        return render(request, 'index.html', {
-            'foods': foods,
-            'title': 'Food List'
-        })
+        return JsonResponse(foods, safe=False)
 
 class FoodDetailsView(APIView):
 

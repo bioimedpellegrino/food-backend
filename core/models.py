@@ -57,6 +57,22 @@ class Food(models.Model):
     sugars = models.IntegerField(default=0)
     protein = models.IntegerField(default=0)
 
+    def to_json(self):
+        return {
+            'name': self.name,
+            'quantity': self.quantity,
+            'calories': self.calories,
+            'totalfat': self.totalfat,
+            'saturatedfat': self.saturatedfat,
+            'carbs': self.carbs,
+            'cholestorol' : self.cholestorol,       
+            'sodium': self.sodium,
+            'fiber': self.fiber,
+            'sugars': self.sugars,
+            'protein': self.protein,
+
+        }
+
     def __str__(self):
         return f"{self.name}"
 
@@ -102,6 +118,14 @@ class Meal(models.Model):
     foods = models.ManyToManyField(Food)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'foods': self.foods,
+            'patient': self.patient,
+        }
+
     def __str__(self):
         return f"{self.patient} - {self.name}"
 
@@ -111,8 +135,7 @@ class Diet(models.Model):
     day_of_week = models.CharField(max_length=20, choices=DAY_OF_WEEK, default="Lunedì") 
     meals = models.ManyToManyField(Meal)
 
-    def __str__(self):
-        return f"{self.patient} - {self.day_of_week}"       
+         
 
 class PatientProgram(models.Model):
 
@@ -122,6 +145,17 @@ class PatientProgram(models.Model):
     dieta = models.ManyToManyField(Diet)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'patient': self.id,
+            'is_active': self.id,
+            'dieta': self.id,
+            'start_date': self.id,
+            'end_date': self.id,
+
+        }
 
     def __str__(self):
         return f"{self.patient}"  
