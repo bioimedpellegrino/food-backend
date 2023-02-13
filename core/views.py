@@ -74,11 +74,22 @@ class FoodListView(APIView):
     def get(self, request, *args, **kwargs):
 
         request_patient = self.request.query_params.get('patient')
-        user=User.objects.get(username=request_patient)
+        request_day = self.request.query_params.get('day')
+        user = User.objects.get(username=request_patient)
         patient = Patient.objects.get(user=User.objects.get(username=user.username))
-        foods = PatientProgram.objects.get(patient=patient).to_json()
+        diet = Diet.objects.get(patient=patient, day_of_week=request_day)
 
-        return JsonResponse(foods, safe=False)
+        meal_list = []
+
+        for meal in diet.meals.all():
+            meal_json = meal.to_json()
+            meal_list.append(meal_json)
+
+        diet_json = diet.to_json()
+
+        return JsonResponse({
+            "label": diet_json['name'],
+            "meals": meal_list}, safe=False)
 
 class FoodDetailsView(APIView):
 

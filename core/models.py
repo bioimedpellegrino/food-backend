@@ -22,11 +22,19 @@ MEALS = [("Colazione", "breakfast"),
 
 class Patient(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, blank=True, 
-    null=True, on_delete=models.SET_NULL)
+    user = models.OneToOneField(User, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=256, blank=True, null=True)
     surname = models.CharField(max_length=256, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'user': self.user,
+            'name': self.name,
+            'surname': self.surname,
+            'birth_date': self.birth_date
+        }
     
 
     def __str__(self):
@@ -116,7 +124,7 @@ class Meal(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, choices=MEALS, default='colazione')
     foods = models.ManyToManyField(Food)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
 
     def to_json(self):
         return {
@@ -132,10 +140,22 @@ class Meal(models.Model):
 # Dieta insieme di pasti, ex: colazione, pranzo, cena, merenda
 class Diet(models.Model):
     id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=256, blank=True, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     day_of_week = models.CharField(max_length=20, choices=DAY_OF_WEEK, default="Lunedì") 
     meals = models.ManyToManyField(Meal)
 
-         
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'patient': self.patient,
+            'day_of_week': self.day_of_week,
+            'meals': self.meals
+        }
+
+    def __str__(self):
+        return f"{self.patient} - {self.day_of_week}"
 
 class PatientProgram(models.Model):
 
