@@ -77,8 +77,9 @@ class FoodListView(APIView):
         request_day = self.request.query_params.get('day')
         user = User.objects.get(username=request_patient)
         patient = Patient.objects.get(user=User.objects.get(username=user.username))
-        diet = Diet.objects.get(patient=patient, day_of_week=request_day)
 
+        # Faccio la query sul giorno e prendo i pasti con rispettivi cibi per quel giorno
+        diet = Diet.objects.get(patient=patient, day_of_week=request_day)
         diet_response = {
             'label': diet.name,
             'meals': [
