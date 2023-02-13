@@ -79,17 +79,24 @@ class FoodListView(APIView):
         patient = Patient.objects.get(user=User.objects.get(username=user.username))
         diet = Diet.objects.get(patient=patient, day_of_week=request_day)
 
-        meal_list = []
+        diet_response = {
+            'label': diet.name,
+            'meals': [
+            {
+                'meal': meal.name,
+                'foods': [
+                            {
+                            'food': food.name,
+                            'calories': food.calories
+                            }
+                            for food in meal.foods.all()
+                        ]
+            
+            } for meal in diet.meals.all()
+            ] 
+        }
 
-        for meal in diet.meals.all():
-            meal_json = meal.to_json()
-            meal_list.append(meal_json)
-
-        diet_json = diet.to_json()
-
-        return JsonResponse({
-            "label": diet_json['name'],
-            "meals": meal_list}, safe=False)
+        return JsonResponse(diet_response, safe=False)
 
 class FoodDetailsView(APIView):
 
