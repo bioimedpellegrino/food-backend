@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from .models import *
+from .forms import *
 import numpy as np
 import traceback
 from django.core.files.base import ContentFile
@@ -68,7 +69,7 @@ class TestView(APIView):
         print(request.user, request.data)
         return Response({'test'}, status=200)
 
-class FoodListView(APIView):
+class DailyFoodListView(APIView):
     
     #dalla request prendo il patient (request.user)
     def get(self, request, *args, **kwargs):
@@ -81,7 +82,7 @@ class FoodListView(APIView):
         # Faccio la query sul giorno e prendo i pasti con rispettivi cibi per quel giorno
         diet = Diet.objects.get(patient=patient, day_of_week=request_day)
         diet_response = {
-            'label': diet.name,
+            'dieta_giornaliera': diet.name,
             'meals': [
             {
                 'meal': meal.name,
@@ -123,3 +124,24 @@ class FoodDetailsView(APIView):
             'food': food,
             'images': food.get_images.all(),
         })
+    
+class addFood(APIView):
+    def get(self, request, *args, **kwargs):
+        request_patient = self.request.query_params.get('patient')
+        form = FoodForm()
+
+        return JsonResponse(form)
+    
+    def post(self, request, *args, **kwargs):
+        request_patient = self.request.query_params.get('patient')
+        form = FoodForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            return JsonResponse(data, status=200)
+        else:
+            data = form.errors.as_json()
+            return JsonResponse(data, status=400) 
+
+    
+
+
