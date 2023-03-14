@@ -14,6 +14,8 @@ import numpy as np
 import traceback
 from django.core.files.base import ContentFile
 import base64
+from .utils import *
+
 # from tensorflow.keras.models import model_from_json
 
 
@@ -73,14 +75,18 @@ class DailyFoodListView(APIView):
     
     #dalla request prendo il patient (request.user)
     def get(self, request, *args, **kwargs):
-
+                
+        print(User.objects.all())        
         request_patient = self.request.query_params.get('patient')
         request_day = self.request.query_params.get('day')
         user = User.objects.get(username=request_patient)
         patient = Patient.objects.get(user=User.objects.get(username=user.username))
 
+        print('---request_day', request_day)
+
         # Faccio la query sul giorno e prendo i pasti con rispettivi cibi per quel giorno
         diet = Diet.objects.get(patient=patient, day_of_week=request_day)
+        
         diet_response = {
             'dieta_giornaliera': diet.name,
             'meals': [
@@ -89,7 +95,9 @@ class DailyFoodListView(APIView):
                 'foods': [
                             {
                             'food': food.name,
-                            'calories': food.calories
+                            'calories': food.calories,
+                            'substitute': get_substitute(food)['substitute'],
+                            'substitute_quantity': get_substitute(food)['quantity']
                             }
                             for food in meal.foods.all()
                         ]
@@ -97,6 +105,8 @@ class DailyFoodListView(APIView):
             } for meal in diet.meals.all()
             ] 
         }
+
+
 
         return JsonResponse(diet_response, safe=False)
 
