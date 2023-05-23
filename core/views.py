@@ -15,6 +15,7 @@ import traceback
 from django.core.files.base import ContentFile
 import base64
 from .utils import *
+import json
 
 # from tensorflow.keras.models import model_from_json
 
@@ -79,6 +80,7 @@ class DailyFoodListView(APIView):
         print(User.objects.all())        
         request_patient = self.request.query_params.get('patient')
         request_day = self.request.query_params.get('day')
+        print('---request_day', request_day)
         user = User.objects.get(username=request_patient)
         patient = Patient.objects.get(user=User.objects.get(username=user.username))
 
@@ -88,16 +90,16 @@ class DailyFoodListView(APIView):
         diet = Diet.objects.get(patient=patient, day_of_week=request_day)
         
         diet_response = {
-            'dieta_giornaliera': diet.name,
+            'dieta_giornaliera': str(diet.name),
             'meals': [
             {
                 'meal': meal.name,
                 'foods': [
                             {
-                            'food': food.name,
-                            'calories': food.calories,
-                            'substitute': get_substitute(food)['substitute'],
-                            'substitute_quantity': get_substitute(food)['quantity']
+                            'food': str(food.name),
+                            'calories': str(food.calories),
+                            'substitute': str(get_substitute(food)['substitute']),
+                            'substitute_quantity': str(get_substitute(food)['quantity'])
                             }
                             for food in meal.foods.all()
                         ]
@@ -106,6 +108,11 @@ class DailyFoodListView(APIView):
             ] 
         }
 
+        # json_str = json.dumps(diet_response)
+
+        # # Write the JSON string to a file
+        # with open('diet_response.json', 'w') as file:
+        #     file.write(json_str)
 
 
         return JsonResponse(diet_response, safe=False)
