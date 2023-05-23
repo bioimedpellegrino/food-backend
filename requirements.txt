@@ -1,3 +1,4 @@
+wheel==0.38.4
 asgiref==3.5.2
 autopep8==1.6.0
 backcall==0.2.0
@@ -43,7 +44,7 @@ parso==0.8.3
 pexpect==4.8.0
 pickleshare==0.7.5
 prompt-toolkit==3.0.36
-psycopg2-binary==2.8.3
+#psycopg2-binary==2.8.3
 ptyprocess==0.7.0
 pycodestyle==2.8.0
 pycparser==2.21
