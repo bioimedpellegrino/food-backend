@@ -90,7 +90,7 @@ class DailyFoodListView(APIView):
         diet = Diet.objects.get(patient=patient, day_of_week=request_day)
         
         diet_response = {
-            'dieta_giornaliera': str(diet.name),
+            'dieta_giornaliera': str(patient) + ' - ' + str(request_day),
             'meals': [
             {
                 'meal': meal.name,
