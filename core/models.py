@@ -97,23 +97,6 @@ class FoodLog(models.Model):
         return f'{self.patient.username} - {self.food_consumed.food_name}'
 
 class FoodSubstitute(models.Model):
-<<<<<<< HEAD
-    food_substitute = models.ForeignKey(Food, on_delete=models.CASCADE, null=True, related_name='food_substitute')
-    quantity = models.DecimalField(max_digits=7, decimal_places=2, default=100.00)
-    calories = models.IntegerField(default=0)
-    totalfat = models.IntegerField(default=0)
-    saturatedfat = models.IntegerField(default=0)
-    carbs = models.IntegerField(default=0)
-    cholestorol = models.IntegerField(default=0)
-    sodium = models.IntegerField(default=0)
-    fiber = models.IntegerField(default=0)
-    sugars = models.IntegerField(default=0)
-    protein = models.IntegerField(default=0)
-    food_to_substitute = models.ForeignKey(Food, on_delete=models.CASCADE, null=True, related_name='food_to_substitute')
-
-    def __str__(self):
-        return f'{self.food_substitute} - {self.food_to_substitute} substitute'
-=======
     name = models.CharField(max_length=256, blank=True, null=True)
     food_to_substitute = models.ForeignKey(Food, default=None,on_delete=models.CASCADE, related_name='food_to_substitute')
     food_substitute = models.ForeignKey(Food, default=None, on_delete=models.CASCADE, related_name='food_substitute')
@@ -121,16 +104,12 @@ class FoodSubstitute(models.Model):
 
     def __str__(self):
         return f"\"{self.food_substitute}\" substitution for \"{self.food_to_substitute}\""
->>>>>>> f17dc3bd1bf8dbf991c489083cc08fe531ddd6ab
 
     class Meta:
         verbose_name = 'Food Substitute'
         verbose_name_plural = 'Food Substitute'
-<<<<<<< HEAD
-=======
     
     
->>>>>>> f17dc3bd1bf8dbf991c489083cc08fe531ddd6ab
 
 class Image(models.Model):
     food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='get_images')
