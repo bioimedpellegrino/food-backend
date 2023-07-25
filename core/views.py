@@ -77,7 +77,7 @@ class DailyFoodListView(APIView):
     #dalla request prendo il patient (request.user)
     def get(self, request, *args, **kwargs):
                 
-        print(User.objects.all())        
+        print(User.objects.all())   
         request_patient = self.request.query_params.get('patient')
         request_day = self.request.query_params.get('day')
         print('---request_day', request_day)
@@ -89,6 +89,7 @@ class DailyFoodListView(APIView):
         # Faccio la query sul giorno e prendo i pasti con rispettivi cibi per quel giorno
         diet = Diet.objects.get(patient=patient, day_of_week=request_day)
         
+
         diet_response = {
             'dieta_giornaliera': str(patient) + ' - ' + str(request_day),
             'meals': [
@@ -113,6 +114,7 @@ class DailyFoodListView(APIView):
         # # Write the JSON string to a file
         # with open('diet_response.json', 'w') as file:
         #     file.write(json_str)
+        print(diet_response)
 
 
         return JsonResponse(diet_response, safe=False)
@@ -159,6 +161,5 @@ class addFood(APIView):
             data = form.errors.as_json()
             return JsonResponse(data, status=400) 
 
-    
 
 
