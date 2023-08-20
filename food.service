@@ -1,0 +1,12 @@
+[Unit]
+Description=uWSGI instance to serve food_backend
+After=network.target
+
+[Service]
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/home/ec2-user/food-backend
+ExecStart=/home/ec2-user/food-backend/venv/bin/uwsgi --ini uwsgi.ini
+
+[Install]
+WantedBy=multi-user.target
