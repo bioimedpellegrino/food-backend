@@ -6,7 +6,4 @@ After=network.target
 User=ec2-user
 Group=ec2-user
 WorkingDirectory=/home/ec2-user/food-backend
-ExecStart=/home/ec2-user/food-backend/venv/bin/uwsgi --ini uwsgi.ini
-
-[Install]
-WantedBy=multi-user.target
+ExecStart=/home/ec2-user/food-backend/venv/bin/uwsgi --ini /home/ec2-user/food-backend/uwsgi.ini
