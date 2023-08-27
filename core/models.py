@@ -20,6 +20,9 @@ MEALS = [("Colazione", "breakfast"),
          ("Merenda", "snack"),
         ]
 
+ADVICE_TYPES = [("Consigli", "advice"),
+                ("Sostituzioni", "swap")]
+
 class Patient(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, blank=True, null=True, on_delete=models.SET_NULL)
@@ -178,3 +181,23 @@ class PatientProgram(models.Model):
     def __str__(self):
         return f"{self.patient}"  
     
+
+class Advice(models.Model):
+    
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to='advice/')
+    type =  models.CharField(max_length=256, choices=ADVICE_TYPES, default='advice')
+    is_active = models.BooleanField(default=True)
+    expire_date = models.DateField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.title}"
+    
+    def to_json(self):
+        return {
+            "title": self.title,
+            "description": self.description,
+            "image": self.image.url,
+            "type": self.type,
+        }

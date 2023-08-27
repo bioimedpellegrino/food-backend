@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import *
+from .models import Patient, Food, Diet, Meal, PatientProgram, FoodSubstitute, Advice
 from .forms import *
 import numpy as np
 import traceback
@@ -16,6 +16,7 @@ from django.core.files.base import ContentFile
 import base64
 from .utils import *
 import json
+import datetime
 
 # from tensorflow.keras.models import model_from_json
 
@@ -162,4 +163,12 @@ class addFood(APIView):
             return JsonResponse(data, status=400) 
 
 
-
+class AdvicesListView(APIView):
+    
+    def get(self, request, *args, **kwargs):
+        
+        today = datetime.datetime.now().date()
+        advices = Advice.objects.filter(is_active=True, expire_date__gte=today)
+        results = [advice.to_json() for advice in advices]
+        return JsonResponse(results, status=200, safe=False)
+        

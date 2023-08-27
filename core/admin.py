@@ -1,5 +1,5 @@
 from django.contrib import admin
-from. models import *
+from. models import Patient, Food, Diet, Meal, PatientProgram, FoodSubstitute, Advice
 
 # Register your models here.
 
@@ -12,4 +12,4 @@ admin.site.register(Diet)
 admin.site.register(Meal)
 admin.site.register(PatientProgram)
 admin.site.register(FoodSubstitute)
-
+admin.site.register(Advice)
