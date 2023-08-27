@@ -86,6 +86,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'food_backend.middleware.LoginResponseMiddleware',
 ]
 
 ROOT_URLCONF = 'food_backend.urls'
