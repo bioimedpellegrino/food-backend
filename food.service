@@ -1,5 +1,5 @@
 [Unit]
-Description=uwsgi emperor for food website
+Description=uwsgi emperor for food backend
 After=network.target
 [Service]
 User=ec2-user
