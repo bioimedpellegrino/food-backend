@@ -11,5 +11,4 @@ model
 .sass-cache/
 node_modules/
 !bower.json
-
 *.sqlite3
