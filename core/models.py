@@ -184,6 +184,7 @@ class PatientProgram(models.Model):
 
 class Advice(models.Model):
     
+    created = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
     image = models.ImageField(upload_to='advice/')
@@ -200,4 +201,5 @@ class Advice(models.Model):
             "description": self.description,
             "image": self.image.url,
             "type": self.type,
+            "time": f"{self.created.strftime('%Y/%m/%d')}"
         }
