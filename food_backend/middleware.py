@@ -3,7 +3,7 @@ from django.http import JsonResponse
 
 class LoginResponseMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
-        if request.path == '/rest-auth/login/' and response.status_code == 200:
+        if request.path == '/api/v1/rest-auth/login/' and response.status_code == 200:
             user = request.user
             response.data['id'] = user.pk
             response.data['isSuperuser'] = user.is_superuser
