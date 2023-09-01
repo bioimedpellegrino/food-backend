@@ -1,17 +1,23 @@
 import pandas as pd
 from core.models import Food
 
-df = pd.read_csv('datasource/import_data.csv', sep=',', header=0)
 
-for food in df.iterrows():
-    try:
-        food_name = food[1][0]
-        food_calories = float(str(food[1][1]).replace(',', '.'))
-        food_kjoules = float(str(food[1][2]).replace(',', '.'))
-        print(food_calories)
-        f = Food(name=food_name, calories=int(food_calories))
-        print('Adding food: ' + str(food))
-        f.save()
-    except Exception as e:
-        print(e)
+def init_data():
+    
+    df = pd.read_excel("datasource/personal_trainer_scrap.xlsx")
+    
+    for _, row in df.iterrows():
+        
+        print(row)
 
+def extract_value_and_unit(text):
+    units = ["%", "mg", "µg", "g"]
+    strings = ["ND", "Tracce", "", "0"]
+    text = str(text)
+    if text.strip() in strings:
+        return text, ""
+    else:
+        for unit in units:
+            if unit in text:
+                value = text.replace(" ", "").replace(unit, "")
+                return value, unit
