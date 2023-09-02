@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import Patient, Food, Diet, Meal, PatientProgram, FoodSubstitute, Advice
+from .models import Patient, Food, DailyMeal, Meal, PatientProgram, FoodSubstitute, Advice
 from .forms import *
 import numpy as np
 import traceback
@@ -88,7 +88,7 @@ class DailyFoodListView(APIView):
         print('---request_day', request_day)
 
         # Faccio la query sul giorno e prendo i pasti con rispettivi cibi per quel giorno
-        diet = Diet.objects.get(patient=patient, day_of_week=request_day)
+        DailyMeal = DailyMeal.objects.get(patient=patient, day_of_week=request_day)
         
 
         diet_response = {
@@ -106,7 +106,7 @@ class DailyFoodListView(APIView):
                             for food in meal.foods.all()
                         ]
             
-            } for meal in diet.meals.all()
+            } for meal in DailyMeal.meals.all()
             ] 
         }
 
