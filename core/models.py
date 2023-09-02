@@ -689,6 +689,7 @@ class DailyMeal(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, blank=True, null=True)
     day_of_week = models.CharField(max_length=20, choices=DAY_OF_WEEK, default="Lunedì")
+    time = models.TimeField(blank=True, null=True)
     
     meals = models.ManyToManyField(Meal)
 
