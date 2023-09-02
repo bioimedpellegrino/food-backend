@@ -68,7 +68,7 @@ class Patient(models.Model):
 
 class WeightMeasure(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    weight = models.DecimalField(max_digits=7, decimal_places=2)
+    weight = models.DecimalField(max_digits=7, decimal_places=4)
     entry_date = models.DateField(blank=True, null=True)
 
     class Meta:
@@ -82,45 +82,45 @@ class Food(models.Model):
 
     name = models.CharField(max_length=255, blank=True, null=True, help_text="Nome del cibo")
     category = models.CharField(max_length=255, choices=FOOD_CATEGORIES, default='', help_text="Categoria del cibo")
-    kcal = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Valore calorico (kcal)")
-    kj = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Valore energetico (kJ)")
-    carbohydrates = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Carboidrati disponibili")
-    fats = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Grassi (g)")
-    proteins = models.DecimalField(max_digits=8, decimal_places=2, default=0, help_text="Proteine (g)")
+    kcal = models.DecimalField(max_digits=16, decimal_places=4, default=0, help_text="Valore calorico (kcal)")
+    kj = models.DecimalField(max_digits=16, decimal_places=4, default=0, help_text="Valore energetico (kJ)")
+    carbohydrates = models.DecimalField(max_digits=16, decimal_places=4, default=0, help_text="Carboidrati disponibili (g)")
+    fats = models.DecimalField(max_digits=16, decimal_places=4, default=0, help_text="Grassi (g)")
+    proteins = models.DecimalField(max_digits=16, decimal_places=4, default=0, help_text="Proteine (g)")
     chemical_composition = models.TextField(help_text="Composizione chimica", blank=True, default='', null=True)
     edible_part = models.CharField(max_length=255, help_text="Parte edibile (%)", default='', blank=True, null=True)
-    water = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Contenuto di acqua (g)")
-    complex_carbohydrates = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Carboidrati complessi (g)")
-    soluble_sugars = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Zuccheri solubili (g)")
-    total_saturated_fats = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Saturi totali (g)")
-    total_monounsaturated_fats = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Monoinsaturi totali (g)")
-    total_polyunsaturated_fats = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Polinsaturi totali (g)")
-    cholesterol = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Colesterolo (mg)")
-    total_fiber = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Fibra totale (g)")
-    soluble_fiber = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Fibra solubile (g)")
-    insoluble_fiber = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Fibra insolubile (g)")
-    alcohol = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Alcol (g)")
-    sodium = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Sodio (mg)")
-    potassium = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Potassio (mg)")
-    iron = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Ferro (mg)")
-    calcium = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Calcio (mg)")
-    phosphorus = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Fosforo (mg)")
-    magnesium = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Magnesio (mg)")
-    zinc = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Zinco (mg)")
-    copper = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Rame (mg)")
-    selenium = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Selenio (µg)")
-    thiamine_vitamin_b1 = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Tiamina (Vit. B1) (mg)")
-    riboflavin_vitamin_b2 = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Riboflavina (Vit. B2) (mg)")
-    niacin_vitamin_b3 = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Niacina (Vit. B3 o PP) (mg)")
-    vitamin_a_retinol_eq = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Vitamina A retinolo eq. (µg)")
-    vitamin_c = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Vitamina C (mg)")
-    vitamin_e = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Vitamina E (mg)")
-    vitamin_b6 = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Vitamina B6 (mg)")
-    vitamin_b12 = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Vitamina B12 (mg)")
-    manganese = models.DecimalField(max_digits=8, decimal_places=2, blank=True, default=0, null=True, help_text="Manganese (mg)")
+    water = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Contenuto di acqua (g)")
+    complex_carbohydrates = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Carboidrati complessi (g)")
+    soluble_sugars = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Zuccheri solubili (g)")
+    total_saturated_fats = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Saturi totali (g)")
+    total_monounsaturated_fats = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Monoinsaturi totali (g)")
+    total_polyunsaturated_fats = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Polinsaturi totali (g)")
+    cholesterol = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Colesterolo (mg)")
+    total_fiber = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Fibra totale (g)")
+    soluble_fiber = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Fibra solubile (g)")
+    insoluble_fiber = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Fibra insolubile (g)")
+    alcohol = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Alcol (g)")
+    sodium = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Sodio (mg)")
+    potassium = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Potassio (mg)")
+    iron = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Ferro (mg)")
+    calcium = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Calcio (mg)")
+    phosphorus = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Fosforo (mg)")
+    magnesium = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Magnesio (mg)")
+    zinc = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Zinco (mg)")
+    copper = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Rame (mg)")
+    selenium = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Selenio (µg)")
+    thiamine_vitamin_b1 = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Tiamina (Vit. B1) (mg)")
+    riboflavin_vitamin_b2 = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Riboflavina (Vit. B2) (mg)")
+    niacin_vitamin_b3 = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Niacina (Vit. B3 o PP) (mg)")
+    vitamin_a_retinol_eq = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Vitamina A retinolo eq. (µg)")
+    vitamin_c = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Vitamina C (mg)")
+    vitamin_e = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Vitamina E (mg)")
+    vitamin_b6 = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Vitamina B6 (mg)")
+    vitamin_b12 = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Vitamina B12 (mg)")
+    manganese = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Manganese (mg)")
 
     def __str__(self):
-        return self.name
+        return f"{self.name - self.category}"
 
 
     def to_json_small(self):
@@ -145,7 +145,7 @@ class Food(models.Model):
             'chemical_composition': self.chemical_composition,
             'edible_part': self.edible_part,
             'water': str(self.water),
-            'available_carbohydrates': str(self.available_carbohydrates),
+            'carbohydrates': str(self.carbohydrates),
             'complex_carbohydrates': str(self.complex_carbohydrates),
             'soluble_sugars': str(self.soluble_sugars),
             'proteins': str(self.proteins),
@@ -181,10 +181,88 @@ class Food(models.Model):
     def __str__(self):
         return f"{self.id} - {self.name}"
 
+    def get_Food_unity():
+    
+        return {        
+            "kcal": "kcal",
+            "kj": "kJ",
+            "Carboidrati disponibili": "g",
+            "Grassi (Lipidi)": "g",
+            "Proteine": "g",
+            "Acqua": "g",
+            "Carboidrati complessi": "g",
+            "Zuccheri solubili": "g",
+            "Saturi totali": "g",
+            "Monoinsaturi totali": "g",
+            "Polinsaturi totali": "g",
+            "Colesterolo": "mg",
+            "Fibra totale": "g",
+            "Fibra solubile": "g",
+            "Fibra insolubile": "g",
+            "Alcol (g)": "g",
+            "Sodio": "mg",
+            "Potassio": "mg",
+            "Ferro": "mg",
+            "Calcio": "mg",
+            "Fosforo": "mg",
+            "Magnesio": "mg",
+            "Zinco": "mg",
+            "Rame": "mg",
+            "Selenio": "µg",
+            "Tiamina (Vit. B1)": "mg",
+            "Riboflavina (Vit. B2)": "mg",
+            "Niacina (Vit. B3 o PP)": "mg",
+            "Vitamina A retinolo eq.": "µg",
+            "Vitamina C": "mg",
+            "Vitamina E": "mg",
+            "Vitamina B6": "mg",
+            "Vitamina B12": "mg",
+            "Manganese": "mg"
+        }
+
+    def get_food_unity():
+    
+        return {        
+            "kcal": "kcal",
+            "kj": "kJ",
+            "carbohydrates": "g",
+            "fats": "g",
+            "proteins": "g",
+            "water": "g",
+            "complex_carbohydrates": "g",
+            "soluble_sugars": "g",
+            "total_saturated_fats": "g",
+            "total_monounsaturated_fats": "g",
+            "total_polyunsaturated_fats": "g",
+            "cholesterol": "mg",
+            "total_fiber": "g",
+            "soluble_fiber": "g",
+            "insoluble_fiber": "g",
+            "alcohol": "g",
+            "sodium": "mg",
+            "potassium": "mg",
+            "iron": "mg",
+            "calcium": "mg",
+            "phosphorus": "mg",
+            "magnesium": "mg",
+            "zinc": "mg",
+            "copper": "mg",
+            "selenium": "µg",
+            "thiamine_vitamin_b1": "mg",
+            "riboflavin_vitamin_b2": "mg",
+            "niacin_vitamin_b3": "mg",
+            "vitamin_a_retinol_eq": "µg",
+            "vitamin_c": "mg",
+            "vitamin_e": "mg",
+            "vitamin_b6": "mg",
+            "vitamin_b12": "mg",
+            "manganese": "mg"
+        }
+
 class Portion(models.Model):
     name = models.CharField(max_length=256, default='', blank=True, null=True)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    quantity = models.DecimalField(max_digits=7, decimal_places=4, default=0)
     unity = models.CharField(max_length=255, choices=UNITY, default="g", null=True, blank=True)
     
     def __str__(self) -> str:
@@ -343,7 +421,7 @@ class FoodSubstitute(models.Model):
     name = models.CharField(max_length=256, blank=True, null=True)
     food_to_substitute = models.ForeignKey(Food, default=None,on_delete=models.CASCADE, related_name='food_to_substitute')
     food_substitute = models.ForeignKey(Food, default=None, on_delete=models.CASCADE, related_name='food_substitute')
-    substitute_quantity = models.DecimalField(max_digits=7, decimal_places=2, default=100.00)
+    substitute_quantity = models.DecimalField(max_digits=7, decimal_places=4, default=100.00)
 
     def __str__(self):
         return f"\"{self.food_substitute}\" substitution for \"{self.food_to_substitute}\""
@@ -682,82 +760,4 @@ class Advice(models.Model):
             "type": self.type,
             "time": f"{self.created.strftime('%Y/%m/%d')}"
         }
-
-def get_Food_unity():
-    
-    return {        
-        "Valore calorico": "kcal",
-        "Valore energetico": "kJ",
-        "Carboidrati disponibili": "g",
-        "Grassi": "g",
-        "Proteine": "g",
-        "Contenuto di acqua": "g",
-        "Carboidrati complessi": "g",
-        "Zuccheri solubili": "g",
-        "Saturi totali": "g",
-        "Monoinsaturi totali": "g",
-        "Polinsaturi totali": "g",
-        "Colesterolo": "mg",
-        "Fibra totale": "g",
-        "Fibra solubile": "g",
-        "Fibra insolubile": "g",
-        "Alcol": "g",
-        "Sodio": "mg",
-        "Potassio": "mg",
-        "Ferro": "mg",
-        "Calcio": "mg",
-        "Fosforo": "mg",
-        "Magnesio": "mg",
-        "Zinco": "mg",
-        "Rame": "mg",
-        "Selenio": "µg",
-        "Tiamina (Vit. B1)": "mg",
-        "Riboflavina (Vit. B2)": "mg",
-        "Niacina (Vit. B3 o PP)": "mg",
-        "Vitamina A retinolo eq.": "µg",
-        "Vitamina C": "mg",
-        "Vitamina E": "mg",
-        "Vitamina B6": "mg",
-        "Vitamina B12": "mg",
-        "Manganese": "mg"
-    }
-
-def get_food_unity():
-    
-    return {        
-        "kcal": "kcal",
-        "kj": "kJ",
-        "carbohydrates": "g",
-        "fats": "g",
-        "proteins": "g",
-        "water": "g",
-        "complex_carbohydrates": "g",
-        "soluble_sugars": "g",
-        "total_saturated_fats": "g",
-        "total_monounsaturated_fats": "g",
-        "total_polyunsaturated_fats": "g",
-        "cholesterol": "mg",
-        "total_fiber": "g",
-        "soluble_fiber": "g",
-        "insoluble_fiber": "g",
-        "alcohol": "g",
-        "sodium": "mg",
-        "potassium": "mg",
-        "iron": "mg",
-        "calcium": "mg",
-        "phosphorus": "mg",
-        "magnesium": "mg",
-        "zinc": "mg",
-        "copper": "mg",
-        "selenium": "µg",
-        "thiamine_vitamin_b1": "mg",
-        "riboflavin_vitamin_b2": "mg",
-        "niacin_vitamin_b3": "mg",
-        "vitamin_a_retinol_eq": "µg",
-        "vitamin_c": "mg",
-        "vitamin_e": "mg",
-        "vitamin_b6": "mg",
-        "vitamin_b12": "mg",
-        "manganese": "mg"
-    } 
     

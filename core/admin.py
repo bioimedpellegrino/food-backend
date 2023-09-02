@@ -5,6 +5,7 @@ from. models import Patient, Food, Diet, Meal, PatientProgram, FoodSubstitute, A
 
 class FoodAdmin(admin.ModelAdmin):
     search_fields = ['name']
+    list_filter = ['category'] 
 
 class PortionAdmin(admin.ModelAdmin):
     readonly_fields = [
