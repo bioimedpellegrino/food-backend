@@ -16,10 +16,12 @@ DAY_OF_WEEK = [("lun", "Lunedì"),
                ("all", "Tutti i giorni"),
                ]
 
-MEALS = [("Colazione", "breakfast"),
-         ("Pranzo", "launch"),
-         ("Cena", "dinner"),
-         ("Merenda", "snack"),
+MEALS = [("breakfast", "Colazione"),
+         ("launch", "Pranzo"),
+         ("dinner", "Cena"),
+         ("snack_morning", "Spuntino mattina"),
+         ("snack_afternoon", "Spuntino pomeriggio"),
+         ("before_sleep", "Pre nanna"),
         ]
 
 ADVICE_TYPES = [("Consigli", "Consigli"),
@@ -47,12 +49,16 @@ FOOD_CATEGORIES = [
 ]
 
 class Patient(models.Model):
+    
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=256, blank=True, null=True)
     surname = models.CharField(max_length=256, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
-
+    
+    def __str__(self):
+        return f"{self.name} {self.surname}"
+    
     def to_json(self):
         return {
             'id': self.id,
@@ -61,25 +67,28 @@ class Patient(models.Model):
             'surname': self.surname,
             'birth_date': self.birth_date
         }
-    
 
-    def __str__(self):
-        return f"{self.name} {self.surname}"
+    class Meta:
+        verbose_name  = "Paziente"
+        verbose_name_plural = "1. Pazienti"
 
 class WeightMeasure(models.Model):
+    
+    id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     weight = models.DecimalField(max_digits=7, decimal_places=4)
     entry_date = models.DateField(blank=True, null=True)
 
-    class Meta:
-        verbose_name = 'Weight'
-        verbose_name_plural = 'Weight'
-
     def __str__(self):
         return f'{self.patient.username} - {self.weight} Kg in data {self.entry_date}'
+    
+    class Meta:
+        verbose_name = 'Pesata'
+        verbose_name_plural = '2. Pesate'
 
 class Food(models.Model):
-
+    
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, null=True, help_text="Nome del cibo")
     category = models.CharField(max_length=255, choices=FOOD_CATEGORIES, default='', help_text="Categoria del cibo")
     kcal = models.DecimalField(max_digits=16, decimal_places=4, default=0, help_text="Valore calorico (kcal)")
@@ -120,8 +129,7 @@ class Food(models.Model):
     manganese = models.DecimalField(max_digits=16, decimal_places=4, blank=True, default=0, null=True, help_text="Manganese (mg)")
 
     def __str__(self):
-        return f"{self.name - self.category}"
-
+        return self.name
 
     def to_json_small(self):
         
@@ -178,9 +186,7 @@ class Food(models.Model):
             'manganese': str(self.manganese),
         }
 
-    def __str__(self):
-        return f"{self.id} - {self.name}"
-
+    @staticmethod
     def get_Food_unity():
     
         return {        
@@ -219,7 +225,8 @@ class Food(models.Model):
             "Vitamina B12": "mg",
             "Manganese": "mg"
         }
-
+    
+    @staticmethod
     def get_food_unity():
     
         return {        
@@ -258,8 +265,15 @@ class Food(models.Model):
             "vitamin_b12": "mg",
             "manganese": "mg"
         }
+    
+    class Meta:
+        verbose_name = "Alimento"
+        verbose_name_plural = "3. Alimenti"
+        ordering = ('name',)
 
 class Portion(models.Model):
+    
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, default='', blank=True, null=True)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=7, decimal_places=4, default=0)
@@ -268,180 +282,153 @@ class Portion(models.Model):
     def __str__(self) -> str:
         return self.name
     
-    @property
     def total_kcal(self):
         return (self.food.kcal / 100) * self.quantity
 
-    @property
     def total_kj(self):
         return (self.food.kj / 100) * self.quantity
 
-    @property
     def total_carbohydrates(self):
         return (self.food.carbohydrates / 100) * self.quantity
 
-    @property
     def total_fats(self):
         return (self.food.fats / 100) * self.quantity
 
-    @property
     def total_proteins(self):
         return (self.food.proteins / 100) * self.quantity
 
-    @property
     def total_water(self):
         return (self.food.water / 100) * self.quantity
 
-    @property
     def total_complex_carbohydrates(self):
         return (self.food.complex_carbohydrates / 100) * self.quantity
 
-    @property
     def total_soluble_sugars(self):
         return (self.food.soluble_sugars / 100) * self.quantity
 
-    @property
     def total_total_saturated_fats(self):
-        return (self.food.total_saturated_fats / 100) * self.quantity
+        return (self.food.total_saturated_fats / 100) * self.quantity if self.food.total_saturated_fats else 0
 
-    @property
     def total_total_monounsaturated_fats(self):
-        return (self.food.total_monounsaturated_fats / 100) * self.quantity
+        return (self.food.total_monounsaturated_fats / 100) * self.quantity if self.food.total_monounsaturated_fats else 0
 
-    @property
     def total_total_polyunsaturated_fats(self):
-        return (self.food.total_polyunsaturated_fats / 100) * self.quantity
+        return (self.food.total_polyunsaturated_fats / 100) * self.quantity if self.food.total_polyunsaturated_fats else 0
 
-    @property
     def total_cholesterol(self):
         return (self.food.cholesterol / 100) * self.quantity
 
-    @property
     def total_total_fiber(self):
         return (self.food.total_fiber / 100) * self.quantity
 
-    @property
     def total_soluble_fiber(self):
         return (self.food.soluble_fiber / 100) * self.quantity
 
-    @property
     def total_insoluble_fiber(self):
         return (self.food.insoluble_fiber / 100) * self.quantity
 
-    @property
     def total_alcohol(self):
         return (self.food.alcohol / 100) * self.quantity
 
-    @property
     def total_sodium(self):
         return (self.food.sodium / 100) * self.quantity
 
-    @property
     def total_potassium(self):
         return (self.food.potassium / 100) * self.quantity
 
-    @property
     def total_iron(self):
         return (self.food.iron / 100) * self.quantity
 
-    @property
     def total_calcium(self):
         return (self.food.calcium / 100) * self.quantity
 
-    @property
     def total_phosphorus(self):
         return (self.food.phosphorus / 100) * self.quantity
 
-    @property
     def total_magnesium(self):
         return (self.food.magnesium / 100) * self.quantity
 
-    @property
     def total_zinc(self):
         return (self.food.zinc / 100) * self.quantity
 
-    @property
     def total_copper(self):
         return (self.food.copper / 100) * self.quantity
 
-    @property
     def total_selenium(self):
         return (self.food.selenium / 100) * self.quantity
 
-    @property
     def total_thiamine_vitamin_b1(self):
         return (self.food.thiamine_vitamin_b1 / 100) * self.quantity
 
-    @property
     def total_riboflavin_vitamin_b2(self):
         return (self.food.riboflavin_vitamin_b2 / 100) * self.quantity
 
-    @property
     def total_niacin_vitamin_b3(self):
         return (self.food.niacin_vitamin_b3 / 100) * self.quantity
 
-    @property
     def total_vitamin_a_retinol_eq(self):
         return (self.food.vitamin_a_retinol_eq / 100) * self.quantity
 
-    @property
     def total_vitamin_c(self):
         return (self.food.vitamin_c / 100) * self.quantity
 
-    @property
     def total_vitamin_e(self):
         return (self.food.vitamin_e / 100) * self.quantity
 
-    @property
     def total_vitamin_b6(self):
         return (self.food.vitamin_b6 / 100) * self.quantity
 
-    @property
     def total_vitamin_b12(self):
         return (self.food.vitamin_b12 / 100) * self.quantity
 
-    @property
     def total_manganese(self):
         return (self.food.manganese / 100) * self.quantity
-
-
-
-class FoodLog(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    food_consumed = models.ForeignKey(Food, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = 'Food Log'
-        verbose_name_plural = 'Food Log'
-
-    def __str__(self):
-        return f'{self.patient.username} - {self.food_consumed.food_name}'
-
-class FoodSubstitute(models.Model):
-    name = models.CharField(max_length=256, blank=True, null=True)
-    food_to_substitute = models.ForeignKey(Food, default=None,on_delete=models.CASCADE, related_name='food_to_substitute')
-    food_substitute = models.ForeignKey(Food, default=None, on_delete=models.CASCADE, related_name='food_substitute')
-    substitute_quantity = models.DecimalField(max_digits=7, decimal_places=4, default=100.00)
-
-    def __str__(self):
-        return f"\"{self.food_substitute}\" substitution for \"{self.food_to_substitute}\""
-
-    class Meta:
-        verbose_name = 'Food Substitute'
-        verbose_name_plural = 'Food Substitute'
     
     
-
-class Image(models.Model):
-    food = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='get_images')
-    image = models.ImageField(upload_to='images/')
-
-    def __str__(self):
-        return f'{self.image}'
+    total_kcal.short_description = "Calorie totali (kcal)"
+    total_kj.short_description = "Kj Totali (kJ)"
+    total_carbohydrates.short_description = "Carboidrati totali (g)"
+    total_fats.short_description = "Grassi totali (g)"
+    total_proteins.short_description = "Proteine totali (g)"
+    total_water.short_description = "Acqua totale (g)"
+    total_complex_carbohydrates.short_description = "Carboidrati complessi totali (g)"
+    total_soluble_sugars.short_description = "Zuccheri solubili totali (g)"
+    total_total_saturated_fats.short_description = "Grassi saturi totali (g)"
+    total_total_monounsaturated_fats.short_description = "Grassi monoinsaturi totali (g)"
+    total_total_polyunsaturated_fats.short_description = "Grassi polinsaturi totali (g)"
+    total_cholesterol.short_description = "Colesterolo totale (mg)"
+    total_total_fiber.short_description = "Fibra totale (g)"
+    total_soluble_fiber.short_description = "Fibra solubile totale (g)"
+    total_insoluble_fiber.short_description = "Fibra insolubile totale (g)"
+    total_alcohol.short_description = "Alcol totale (g)"
+    total_sodium.short_description = "Sodio totale (mg)"
+    total_potassium.short_description = "Potassio totale (mg)"
+    total_iron.short_description = "Ferro totale (mg)"
+    total_calcium.short_description = "Calcio totale (mg)"
+    total_phosphorus.short_description = "Fosforo totale (mg)"
+    total_magnesium.short_description = "Magnesio totale (mg)"
+    total_zinc.short_description = "Zinco totale (mg)"
+    total_copper.short_description = "Rame totale (mg)"
+    total_selenium.short_description = "Selenio totale (µg)"
+    total_thiamine_vitamin_b1.short_description = "Tiamina (Vit. B1) totale (mg)"
+    total_riboflavin_vitamin_b2.short_description = "Riboflavina (Vit. B2) totale (mg)"
+    total_niacin_vitamin_b3.short_description = "Niacina (Vit. B3 o PP) totale (mg)"
+    total_vitamin_a_retinol_eq.short_description = "Vitamina A retinolo eq. totale (µg)"
+    total_vitamin_c.short_description = "Vitamina C totale (mg)"
+    total_vitamin_e.short_description = "Vitamina E totale (mg)"
+    total_vitamin_b6.short_description = "Vitamina B6 totale (mg)"
+    total_vitamin_b12.short_description = "Vitamina B12 totale (mg)"
+    total_manganese.short_description = "Manganese totale (mg)"
+    
+    class Meta:
+        verbose_name = "Porzione"
+        verbose_name_plural = "4. Porzioni"
 
 class Meal(models.Model):
+    
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=256, choices=MEALS, default='colazione')
+    category = models.CharField(max_length=256, choices=MEALS, default='colazione')
+    name = models.CharField(max_length=256, blank=True, null=True)
     portions = models.ManyToManyField(Portion)
 
     def to_json(self):
@@ -454,253 +441,255 @@ class Meal(models.Model):
     def __str__(self):
         return f"{self.name}"
             
-    @property
     def total_kcal(self):
         total_kcal = 0
         for portion in self.portions.all():
-            total_kcal += portion.total_kcal
+            total_kcal += portion.total_kcal()
         return total_kcal
         
-    @property
     def total_kj(self):
         total_kj = 0
         for portion in self.portions.all():
-            total_kj += portion.total_kj
+            total_kj += portion.total_kj()
         return total_kj
         
-    @property
     def total_carbohydrates(self):
         total_carbohydrates = 0
         for portion in self.portions.all():
-            total_carbohydrates += portion.total_carbohydrates
+            total_carbohydrates += portion.total_carbohydrates()
         return total_carbohydrates
         
-    @property
     def total_fats(self):
         total_fats = 0
         for portion in self.portions.all():
-            total_fats += portion.total_fats
+            total_fats += portion.total_fats()
         return total_fats
         
-    @property
     def total_proteins(self):
         total_proteins = 0
         for portion in self.portions.all():
-            total_proteins += portion.total_proteins
+            total_proteins += portion.total_proteins()
         return total_proteins
 
-    @property
     def total_water(self):
         total_water = 0
         for portion in self.portions.all():
-            total_water += portion.total_water
+            total_water += portion.total_water()
         return total_water
         
-    @property
     def total_complex_carbohydrates(self):
         total_complex_carbohydrates = 0
         for portion in self.portions.all():
-            total_complex_carbohydrates += portion.total_complex_carbohydrates
+            total_complex_carbohydrates += portion.total_complex_carbohydrates()
         return total_complex_carbohydrates
         
-    @property
     def total_soluble_sugars(self):
         total_soluble_sugars = 0
         for portion in self.portions.all():
-            total_soluble_sugars += portion.total_soluble_sugars
+            total_soluble_sugars += portion.total_soluble_sugars()
         return total_soluble_sugars
         
-    @property
     def total_total_saturated_fats(self):
         total_total_saturated_fats = 0
         for portion in self.portions.all():
-            total_total_saturated_fats += portion.total_total_saturated_fats
+            total_total_saturated_fats += portion.total_total_saturated_fats()
         return total_total_saturated_fats
         
-    @property
     def total_total_monounsaturated_fats(self):
         total_total_monounsaturated_fats = 0
         for portion in self.portions.all():
-            total_total_monounsaturated_fats += portion.total_total_monounsaturated_fats
+            total_total_monounsaturated_fats += portion.total_total_monounsaturated_fats()
         return total_total_monounsaturated_fats
         
-    @property
     def total_total_polyunsaturated_fats(self):
         total_total_polyunsaturated_fats = 0
         for portion in self.portions.all():
-            total_total_polyunsaturated_fats += portion.total_total_polyunsaturated_fats
+            total_total_polyunsaturated_fats += portion.total_total_polyunsaturated_fats()
         return total_total_polyunsaturated_fats
         
-    @property
     def total_cholesterol(self):
         total_cholesterol = 0
         for portion in self.portions.all():
-            total_cholesterol += portion.total_cholesterol
+            total_cholesterol += portion.total_cholesterol()
         return total_cholesterol
         
-    @property
     def total_total_fiber(self):
         total_total_fiber = 0
         for portion in self.portions.all():
-            total_total_fiber += portion.total_total_fiber
+            total_total_fiber += portion.total_total_fiber()
         return total_total_fiber
         
-    @property
     def total_soluble_fiber(self):
         total_soluble_fiber = 0
         for portion in self.portions.all():
-            total_soluble_fiber += portion.total_soluble_fiber
+            total_soluble_fiber += portion.total_soluble_fiber()
         return total_soluble_fiber
         
-    @property
     def total_insoluble_fiber(self):
         total_insoluble_fiber = 0
         for portion in self.portions.all():
-            total_insoluble_fiber += portion.total_insoluble_fiber
+            total_insoluble_fiber += portion.total_insoluble_fiber()
         return total_insoluble_fiber
         
-    @property
     def total_alcohol(self):
         total_alcohol = 0
         for portion in self.portions.all():
-            total_alcohol += portion.total_alcohol
+            total_alcohol += portion.total_alcohol()
         return total_alcohol
         
-    @property
     def total_sodium(self):
         total_sodium = 0
         for portion in self.portions.all():
-            total_sodium += portion.total_sodium
+            total_sodium += portion.total_sodium()
         return total_sodium
         
-    @property
     def total_potassium(self):
         total_potassium = 0
         for portion in self.portions.all():
-            total_potassium += portion.total_potassium
+            total_potassium += portion.total_potassium()
         return total_potassium
         
-    @property
     def total_iron(self):
         total_iron = 0
         for portion in self.portions.all():
-            total_iron += portion.total_iron
+            total_iron += portion.total_iron()
         return total_iron
         
-    @property
     def total_calcium(self):
         total_calcium = 0
         for portion in self.portions.all():
-            total_calcium += portion.total_calcium
+            total_calcium += portion.total_calcium()
         return total_calcium
         
-    @property
     def total_phosphorus(self):
         total_phosphorus = 0
         for portion in self.portions.all():
-            total_phosphorus += portion.total_phosphorus
+            total_phosphorus += portion.total_phosphorus()
         return total_phosphorus
         
-    @property
     def total_magnesium(self):
         total_magnesium = 0
         for portion in self.portions.all():
-            total_magnesium += portion.total_magnesium
+            total_magnesium += portion.total_magnesium()
         return total_magnesium
         
-    @property
     def total_zinc(self):
         total_zinc = 0
         for portion in self.portions.all():
-            total_zinc += portion.total_zinc
+            total_zinc += portion.total_zinc()
         return total_zinc
         
-    @property
     def total_copper(self):
         total_copper = 0
         for portion in self.portions.all():
-            total_copper += portion.total_copper
+            total_copper += portion.total_copper()
         return total_copper
         
-    @property
     def total_selenium(self):
         total_selenium = 0
         for portion in self.portions.all():
-            total_selenium += portion.total_selenium
+            total_selenium += portion.total_selenium()
         return total_selenium
         
-    @property
     def total_thiamine_vitamin_b1(self):
         total_thiamine_vitamin_b1 = 0
         for portion in self.portions.all():
-            total_thiamine_vitamin_b1 += portion.total_thiamine_vitamin_b1
+            total_thiamine_vitamin_b1 += portion.total_thiamine_vitamin_b1()
         return total_thiamine_vitamin_b1
         
-    @property
     def total_riboflavin_vitamin_b2(self):
         total_riboflavin_vitamin_b2 = 0
         for portion in self.portions.all():
-            total_riboflavin_vitamin_b2 += portion.total_riboflavin_vitamin_b2
+            total_riboflavin_vitamin_b2 += portion.total_riboflavin_vitamin_b2()
         return total_riboflavin_vitamin_b2
         
-    @property
     def total_niacin_vitamin_b3(self):
         total_niacin_vitamin_b3 = 0
         for portion in self.portions.all():
-            total_niacin_vitamin_b3 += portion.total_niacin_vitamin_b3
+            total_niacin_vitamin_b3 += portion.total_niacin_vitamin_b3()
         return total_niacin_vitamin_b3
         
-    @property
     def total_vitamin_a_retinol_eq(self):
         total_vitamin_a_retinol_eq = 0
         for portion in self.portions.all():
-            total_vitamin_a_retinol_eq += portion.total_vitamin_a_retinol_eq
+            total_vitamin_a_retinol_eq += portion.total_vitamin_a_retinol_eq()
         return total_vitamin_a_retinol_eq
         
-    @property
     def total_vitamin_c(self):
         total_vitamin_c = 0
         for portion in self.portions.all():
-            total_vitamin_c += portion.total_vitamin_c
+            total_vitamin_c += portion.total_vitamin_c()
         return total_vitamin_c
         
-    @property
     def total_vitamin_e(self):
         total_vitamin_e = 0
         for portion in self.portions.all():
-            total_vitamin_e += portion.total_vitamin_e
+            total_vitamin_e += portion.total_vitamin_e()
         return total_vitamin_e
         
-    @property
     def total_vitamin_b6(self):
         total_vitamin_b6 = 0
         for portion in self.portions.all():
-            total_vitamin_b6 += portion.total_vitamin_b6
+            total_vitamin_b6 += portion.total_vitamin_b6()
         return total_vitamin_b6
         
-    @property
     def total_vitamin_b12(self):
         total_vitamin_b12 = 0
         for portion in self.portions.all():
-            total_vitamin_b12 += portion.total_vitamin_b12
+            total_vitamin_b12 += portion.total_vitamin_b12()
         return total_vitamin_b12
         
-    @property
     def total_manganese(self):
         total_manganese = 0
         for portion in self.portions.all():
-            total_manganese += portion.total_manganese
+            total_manganese += portion.total_manganese()
         return total_manganese
-        
-
- 
     
-# Dieta insieme di pasti, ex: colazione, pranzo, cena, merenda
-class Diet(models.Model):
+    total_kcal.short_description = "Calorie totali (kcal)"
+    total_kj.short_description = "Kj Totali (kJ)"
+    total_carbohydrates.short_description = "Carboidrati totali (g)"
+    total_fats.short_description = "Grassi totali (g)"
+    total_proteins.short_description = "Proteine totali (g)"
+    total_water.short_description = "Acqua totale (g)"
+    total_complex_carbohydrates.short_description = "Carboidrati complessi totali (g)"
+    total_soluble_sugars.short_description = "Zuccheri solubili totali (g)"
+    total_total_saturated_fats.short_description = "Grassi saturi totali (g)"
+    total_total_monounsaturated_fats.short_description = "Grassi monoinsaturi totali (g)"
+    total_total_polyunsaturated_fats.short_description = "Grassi polinsaturi totali (g)"
+    total_cholesterol.short_description = "Colesterolo totale (mg)"
+    total_total_fiber.short_description = "Fibra totale (g)"
+    total_soluble_fiber.short_description = "Fibra solubile totale (g)"
+    total_insoluble_fiber.short_description = "Fibra insolubile totale (g)"
+    total_alcohol.short_description = "Alcol totale (g)"
+    total_sodium.short_description = "Sodio totale (mg)"
+    total_potassium.short_description = "Potassio totale (mg)"
+    total_iron.short_description = "Ferro totale (mg)"
+    total_calcium.short_description = "Calcio totale (mg)"
+    total_phosphorus.short_description = "Fosforo totale (mg)"
+    total_magnesium.short_description = "Magnesio totale (mg)"
+    total_zinc.short_description = "Zinco totale (mg)"
+    total_copper.short_description = "Rame totale (mg)"
+    total_selenium.short_description = "Selenio totale (µg)"
+    total_thiamine_vitamin_b1.short_description = "Tiamina (Vit. B1) totale (mg)"
+    total_riboflavin_vitamin_b2.short_description = "Riboflavina (Vit. B2) totale (mg)"
+    total_niacin_vitamin_b3.short_description = "Niacina (Vit. B3 o PP) totale (mg)"
+    total_vitamin_a_retinol_eq.short_description = "Vitamina A retinolo eq. totale (µg)"
+    total_vitamin_c.short_description = "Vitamina C totale (mg)"
+    total_vitamin_e.short_description = "Vitamina E totale (mg)"
+    total_vitamin_b6.short_description = "Vitamina B6 totale (mg)"
+    total_vitamin_b12.short_description = "Vitamina B12 totale (mg)"
+    total_manganese.short_description = "Manganese totale (mg)"
+
+    class Meta:
+        verbose_name = "Pasto"
+        verbose_name_plural = "5. Pasti"
+        
+class DailyMeal(models.Model):
+    # Dieta insieme di pasti, ex: colazione, pranzo, cena, merenda
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, blank=True, null=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
-    day_of_week = models.CharField(max_length=20, choices=DAY_OF_WEEK, default="Lunedì") 
+    day_of_week = models.CharField(max_length=20, choices=DAY_OF_WEEK, default="Lunedì")
+    
     meals = models.ManyToManyField(Meal)
 
     def to_json(self):
@@ -713,14 +702,257 @@ class Diet(models.Model):
         }
 
     def __str__(self):
-        return f"{self.patient} - {self.day_of_week}"
+        return self.name if self.name else ''
+    
+    def total_kcal(self):
+        total_kcal = 0
+        for meal in self.meals.all():
+            total_kcal += meal.total_kcal()
+        return total_kcal
+        
+    def total_kj(self):
+        total_kj = 0
+        for meal in self.meals.all():
+            total_kj += meal.total_kj()
+        return total_kj
+        
+    def total_carbohydrates(self):
+        total_carbohydrates = 0
+        for meal in self.meals.all():
+            total_carbohydrates += meal.total_carbohydrates()
+        return total_carbohydrates
+        
+    def total_fats(self):
+        total_fats = 0
+        for meal in self.meals.all():
+            total_fats += meal.total_fats()
+        return total_fats
+        
+    def total_proteins(self):
+        total_proteins = 0
+        for meal in self.meals.all():
+            total_proteins += meal.total_proteins()
+        return total_proteins
+
+    def total_water(self):
+        total_water = 0
+        for meal in self.meals.all():
+            total_water += meal.total_water()
+        return total_water
+        
+    def total_complex_carbohydrates(self):
+        total_complex_carbohydrates = 0
+        for meal in self.meals.all():
+            total_complex_carbohydrates += meal.total_complex_carbohydrates()
+        return total_complex_carbohydrates
+        
+    def total_soluble_sugars(self):
+        total_soluble_sugars = 0
+        for meal in self.meals.all():
+            total_soluble_sugars += meal.total_soluble_sugars()
+        return total_soluble_sugars
+        
+    def total_total_saturated_fats(self):
+        total_total_saturated_fats = 0
+        for meal in self.meals.all():
+            total_total_saturated_fats += meal.total_total_saturated_fats()
+        return total_total_saturated_fats
+        
+    def total_total_monounsaturated_fats(self):
+        total_total_monounsaturated_fats = 0
+        for meal in self.meals.all():
+            total_total_monounsaturated_fats += meal.total_total_monounsaturated_fats()
+        return total_total_monounsaturated_fats
+        
+    def total_total_polyunsaturated_fats(self):
+        total_total_polyunsaturated_fats = 0
+        for meal in self.meals.all():
+            total_total_polyunsaturated_fats += meal.total_total_polyunsaturated_fats()
+        return total_total_polyunsaturated_fats
+        
+    def total_cholesterol(self):
+        total_cholesterol = 0
+        for meal in self.meals.all():
+            total_cholesterol += meal.total_cholesterol()
+        return total_cholesterol
+        
+    def total_total_fiber(self):
+        total_total_fiber = 0
+        for meal in self.meals.all():
+            total_total_fiber += meal.total_total_fiber()
+        return total_total_fiber
+        
+    def total_soluble_fiber(self):
+        total_soluble_fiber = 0
+        for meal in self.meals.all():
+            total_soluble_fiber += meal.total_soluble_fiber()
+        return total_soluble_fiber
+        
+    def total_insoluble_fiber(self):
+        total_insoluble_fiber = 0
+        for meal in self.meals.all():
+            total_insoluble_fiber += meal.total_insoluble_fiber()
+        return total_insoluble_fiber
+        
+    def total_alcohol(self):
+        total_alcohol = 0
+        for meal in self.meals.all():
+            total_alcohol += meal.total_alcohol()
+        return total_alcohol
+        
+    def total_sodium(self):
+        total_sodium = 0
+        for meal in self.meals.all():
+            total_sodium += meal.total_sodium()
+        return total_sodium
+        
+    def total_potassium(self):
+        total_potassium = 0
+        for meal in self.meals.all():
+            total_potassium += meal.total_potassium()
+        return total_potassium
+        
+    def total_iron(self):
+        total_iron = 0
+        for meal in self.meals.all():
+            total_iron += meal.total_iron()
+        return total_iron
+        
+    def total_calcium(self):
+        total_calcium = 0
+        for meal in self.meals.all():
+            total_calcium += meal.total_calcium()
+        return total_calcium
+        
+    def total_phosphorus(self):
+        total_phosphorus = 0
+        for meal in self.meals.all():
+            total_phosphorus += meal.total_phosphorus()
+        return total_phosphorus
+        
+    def total_magnesium(self):
+        total_magnesium = 0
+        for meal in self.meals.all():
+            total_magnesium += meal.total_magnesium()
+        return total_magnesium
+        
+    def total_zinc(self):
+        total_zinc = 0
+        for meal in self.meals.all():
+            total_zinc += meal.total_zinc()
+        return total_zinc
+        
+    def total_copper(self):
+        total_copper = 0
+        for meal in self.meals.all():
+            total_copper += meal.total_copper()
+        return total_copper
+        
+    def total_selenium(self):
+        total_selenium = 0
+        for meal in self.meals.all():
+            total_selenium += meal.total_selenium()
+        return total_selenium
+        
+    def total_thiamine_vitamin_b1(self):
+        total_thiamine_vitamin_b1 = 0
+        for meal in self.meals.all():
+            total_thiamine_vitamin_b1 += meal.total_thiamine_vitamin_b1()
+        return total_thiamine_vitamin_b1
+        
+    def total_riboflavin_vitamin_b2(self):
+        total_riboflavin_vitamin_b2 = 0
+        for meal in self.meals.all():
+            total_riboflavin_vitamin_b2 += meal.total_riboflavin_vitamin_b2()
+        return total_riboflavin_vitamin_b2
+        
+    def total_niacin_vitamin_b3(self):
+        total_niacin_vitamin_b3 = 0
+        for meal in self.meals.all():
+            total_niacin_vitamin_b3 += meal.total_niacin_vitamin_b3()
+        return total_niacin_vitamin_b3
+        
+    def total_vitamin_a_retinol_eq(self):
+        total_vitamin_a_retinol_eq = 0
+        for meal in self.meals.all():
+            total_vitamin_a_retinol_eq += meal.total_vitamin_a_retinol_eq()
+        return total_vitamin_a_retinol_eq
+        
+    def total_vitamin_c(self):
+        total_vitamin_c = 0
+        for meal in self.meals.all():
+            total_vitamin_c += meal.total_vitamin_c()
+        return total_vitamin_c
+        
+    def total_vitamin_e(self):
+        total_vitamin_e = 0
+        for meal in self.meals.all():
+            total_vitamin_e += meal.total_vitamin_e()
+        return total_vitamin_e
+        
+    def total_vitamin_b6(self):
+        total_vitamin_b6 = 0
+        for meal in self.meals.all():
+            total_vitamin_b6 += meal.total_vitamin_b6()
+        return total_vitamin_b6
+        
+    def total_vitamin_b12(self):
+        total_vitamin_b12 = 0
+        for meal in self.meals.all():
+            total_vitamin_b12 += meal.total_vitamin_b12()
+        return total_vitamin_b12
+        
+    def total_manganese(self):
+        total_manganese = 0
+        for meal in self.meals.all():
+            total_manganese += meal.total_manganese()
+        return total_manganese
+    
+    total_kcal.short_description = "Calorie totali (kcal)"
+    total_kj.short_description = "Kj Totali (kJ)"
+    total_carbohydrates.short_description = "Carboidrati totali (g)"
+    total_fats.short_description = "Grassi totali (g)"
+    total_proteins.short_description = "Proteine totali (g)"
+    total_water.short_description = "Acqua totale (g)"
+    total_complex_carbohydrates.short_description = "Carboidrati complessi totali (g)"
+    total_soluble_sugars.short_description = "Zuccheri solubili totali (g)"
+    total_total_saturated_fats.short_description = "Grassi saturi totali (g)"
+    total_total_monounsaturated_fats.short_description = "Grassi monoinsaturi totali (g)"
+    total_total_polyunsaturated_fats.short_description = "Grassi polinsaturi totali (g)"
+    total_cholesterol.short_description = "Colesterolo totale (mg)"
+    total_total_fiber.short_description = "Fibra totale (g)"
+    total_soluble_fiber.short_description = "Fibra solubile totale (g)"
+    total_insoluble_fiber.short_description = "Fibra insolubile totale (g)"
+    total_alcohol.short_description = "Alcol totale (g)"
+    total_sodium.short_description = "Sodio totale (mg)"
+    total_potassium.short_description = "Potassio totale (mg)"
+    total_iron.short_description = "Ferro totale (mg)"
+    total_calcium.short_description = "Calcio totale (mg)"
+    total_phosphorus.short_description = "Fosforo totale (mg)"
+    total_magnesium.short_description = "Magnesio totale (mg)"
+    total_zinc.short_description = "Zinco totale (mg)"
+    total_copper.short_description = "Rame totale (mg)"
+    total_selenium.short_description = "Selenio totale (µg)"
+    total_thiamine_vitamin_b1.short_description = "Tiamina (Vit. B1) totale (mg)"
+    total_riboflavin_vitamin_b2.short_description = "Riboflavina (Vit. B2) totale (mg)"
+    total_niacin_vitamin_b3.short_description = "Niacina (Vit. B3 o PP) totale (mg)"
+    total_vitamin_a_retinol_eq.short_description = "Vitamina A retinolo eq. totale (µg)"
+    total_vitamin_c.short_description = "Vitamina C totale (mg)"
+    total_vitamin_e.short_description = "Vitamina E totale (mg)"
+    total_vitamin_b6.short_description = "Vitamina B6 totale (mg)"
+    total_vitamin_b12.short_description = "Vitamina B12 totale (mg)"
+    total_manganese.short_description = "Manganese totale (mg)"
+
+    class Meta:
+        verbose_name = "Pasto giornaliero"
+        verbose_name_plural = "6. Pasti giornalieri"
 
 class PatientProgram(models.Model):
 
     id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, blank=True, null=True, on_delete=models.SET_NULL)
     is_active = models.BooleanField(default=False)
-    dieta = models.ManyToManyField(Diet)
+    daily_meals = models.ManyToManyField(DailyMeal)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 
@@ -736,11 +968,46 @@ class PatientProgram(models.Model):
         }
 
     def __str__(self):
-        return f"{self.patient}"  
+        return f"{self.patient}" 
     
+    
+
+    class Meta:
+        verbose_name = "Programma"
+        verbose_name_plural = "7. Programmi"
+    
+
+class FoodLog(models.Model):
+    
+    id = models.AutoField(primary_key=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    food_consumed = models.ForeignKey(Food, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.patient.username} - {self.food_consumed.food_name}'
+    
+    class Meta:
+        verbose_name = 'Log pasto'
+        verbose_name_plural = '8. Log pasti'
+
+class FoodSubstitute(models.Model):
+    
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=256, blank=True, null=True)
+    food_to_substitute = models.ForeignKey(Food, default=None,on_delete=models.CASCADE, related_name='food_to_substitute')
+    food_substitute = models.ForeignKey(Food, default=None, on_delete=models.CASCADE, related_name='food_substitute')
+    substitute_quantity = models.DecimalField(max_digits=7, decimal_places=4, default=100.00)
+
+    def __str__(self):
+        return f"\"{self.food_substitute}\" substitution for \"{self.food_to_substitute}\""
+
+    class Meta:
+        verbose_name = 'Sostituzione'
+        verbose_name_plural = '9. Sostituzione pasto'
 
 class Advice(models.Model):
     
+    id = models.AutoField(primary_key=True)
     created = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
@@ -760,4 +1027,8 @@ class Advice(models.Model):
             "type": self.type,
             "time": f"{self.created.strftime('%Y/%m/%d')}"
         }
+    
+    class Meta:
+        verbose_name = 'Consiglio'
+        verbose_name_plural = 'Consigli / Articoli per APP'
     
