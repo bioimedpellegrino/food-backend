@@ -301,10 +301,10 @@ class Portion(models.Model):
         return (self.food.water / 100) * self.quantity
 
     def total_complex_carbohydrates(self):
-        return (self.food.complex_carbohydrates / 100) * self.quantity
+        return (self.food.complex_carbohydrates / 100) * self.quantity if self.food.complex_carbohydrates else 0
 
     def total_soluble_sugars(self):
-        return (self.food.soluble_sugars / 100) * self.quantity
+        return (self.food.soluble_sugars / 100) * self.quantity if self.food.soluble_sugars else 0
 
     def total_total_saturated_fats(self):
         return (self.food.total_saturated_fats / 100) * self.quantity if self.food.total_saturated_fats else 0
@@ -316,28 +316,28 @@ class Portion(models.Model):
         return (self.food.total_polyunsaturated_fats / 100) * self.quantity if self.food.total_polyunsaturated_fats else 0
 
     def total_cholesterol(self):
-        return (self.food.cholesterol / 100) * self.quantity
+        return (self.food.cholesterol / 100) * self.quantity if self.food.cholesterol else 0
 
     def total_total_fiber(self):
-        return (self.food.total_fiber / 100) * self.quantity
+        return (self.food.total_fiber / 100) * self.quantity if self.food.total_fiber else 0
 
     def total_soluble_fiber(self):
-        return (self.food.soluble_fiber / 100) * self.quantity
+        return (self.food.soluble_fiber / 100) * self.quantity if self.food.soluble_fiber else 0
 
     def total_insoluble_fiber(self):
-        return (self.food.insoluble_fiber / 100) * self.quantity
+        return (self.food.insoluble_fiber / 100) * self.quantity if self.food.insoluble_fiber else 0
 
     def total_alcohol(self):
-        return (self.food.alcohol / 100) * self.quantity
+        return (self.food.alcohol / 100) * self.quantity if self.food.alcohol else 0
 
     def total_sodium(self):
-        return (self.food.sodium / 100) * self.quantity
+        return (self.food.sodium / 100) * self.quantity if self.food.sodium else 0
 
     def total_potassium(self):
-        return (self.food.potassium / 100) * self.quantity
+        return (self.food.potassium / 100) * self.quantity if self.food.potassium else 0
 
     def total_iron(self):
-        return (self.food.iron / 100) * self.quantity
+        return (self.food.iron / 100) * self.quantity if self.food.iron else 0
 
     def total_calcium(self):
         return (self.food.calcium / 100) * self.quantity

@@ -1,5 +1,5 @@
 import pandas as pd
-from core.models import Food
+from core.models import Food, Portion
 
 CATEGORIES = {
    "Carni Fresche":"carni_fresche",
@@ -69,6 +69,19 @@ def init_data():
         food.manganese = extract_value_and_unit(row["Manganese"])
         food.save()
         
+
+def init_portions():
+    
+    foods = Food.objects.all()
+    
+    for food in foods:
+        for quantity in range(10, 260, 10):
+            name = f"{quantity} g - {food.name}"
+            p = Portion()
+            p.name = name
+            p.quantity = quantity
+            p.food = food
+            p.save()
 
 def extract_value_and_unit(text):
     units = ["%", "mg", "µg", "g"]
