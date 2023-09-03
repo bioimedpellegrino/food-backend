@@ -1,5 +1,8 @@
 import pandas as pd
-from core.models import Food, Portion
+import datetime
+from tqdm import tqdm
+from core.models import Food, Portion, Patient
+from django.contrib.auth.models import User
 
 CATEGORIES = {
    "Carni Fresche":"carni_fresche",
@@ -20,14 +23,13 @@ CATEGORIES = {
    "Bevande Alcooliche":"bevande_alcooliche"
 }
 
-def init_data():
+def init_foods():
     
     df = pd.read_excel("datasource/personal_trainer_scrap.xlsx")
     
     food_unity = Food.get_Food_unity()
     
-    for _, row in df.iterrows():
-        print(row)
+    for _, row in tqdm(df.iterrows()):
         food, cre = Food.objects.get_or_create(name=row['name'])
         food.name = row['name']
         food.category = CATEGORIES[row['category']]
@@ -74,14 +76,29 @@ def init_portions():
     
     foods = Food.objects.all()
     
-    for food in foods:
+    for food in tqdm(foods):
         for quantity in range(10, 260, 10):
-            name = f"{quantity} g - {food.name}"
+            name = food.name
             p = Portion()
             p.name = name
             p.quantity = quantity
+            p.unity = "g"
             p.food = food
             p.save()
+
+def init_patient():
+    
+    patient = Patient()
+    patient.name = "Alessandro"
+    patient.surname = "Pellegrino"
+    patient.birth_date = datetime.datetime(1994, 2, 1).date()
+    patient.user = User.objects.get(pk=1)
+    patient.save()
+    
+def init_data():
+    init_foods()
+    init_patient()
+    init_portions()
 
 def extract_value_and_unit(text):
     units = ["%", "mg", "µg", "g"]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from. models import Patient, Food, DailyMeal, Meal, PatientProgram, FoodSubstitute, Advice, Portion
+from. models import Patient, Food, DailyDiet, Meal, PatientProgram, FoodSubstitute, Advice, Portion
 
 # Register your models here.
 
@@ -90,9 +90,10 @@ class MealAdmin(admin.ModelAdmin):
     ]
 
 class DailyMealAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    list_filter = ['day_of_week']
+    search_fields = ['id','name']
+    list_filter = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday']
     autocomplete_fields = ['meals']
+    list_display = ['id','name', 'total_kcal', 'total_carbohydrates', 'total_fats', 'total_proteins']
     readonly_fields = [
         'total_kcal',
         'total_kj',
@@ -129,14 +130,31 @@ class DailyMealAdmin(admin.ModelAdmin):
         'total_vitamin_b12',
         'total_manganese',
     ]
+    
+    def clone_selected(self, request, queryset):
+        for obj in queryset:
+            obj.clone()
+        self.message_user(request, "Gli elementi selezionati sono stati clonati con successo.")
+    clone_selected.short_description = "Clona gli elementi selezionati"
+    
+    actions = [clone_selected]
 
 class PatientProgramAdmin(admin.ModelAdmin):
     list_filter = ['patient', 'is_active']
     autocomplete_fields = ['daily_meals']
+    readonly_fields = [
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday'
+    ]
     
 admin.site.register(Patient)
 admin.site.register(Food, FoodAdmin)
-admin.site.register(DailyMeal, DailyMealAdmin)
+admin.site.register(DailyDiet, DailyMealAdmin)
 admin.site.register(Meal, MealAdmin)
 admin.site.register(PatientProgram, PatientProgramAdmin)
 admin.site.register(FoodSubstitute)

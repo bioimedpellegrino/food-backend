@@ -8,7 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .models import Patient, Food, DailyMeal, Meal, PatientProgram, FoodSubstitute, Advice
+from django.db.models import Q
+from .models import Patient, Food, DailyDiet, Meal, PatientProgram, FoodSubstitute, Advice
 from .forms import *
 import numpy as np
 import traceback
@@ -18,107 +19,22 @@ from .utils import *
 import json
 import datetime
 
-# from tensorflow.keras.models import model_from_json
-
-
-class ImageUploadView(APIView):
-
-    def post(self, request, *args, **kwargs):
-        try:
-            request_data = request.data()
-            print(request.data['b64Data'][:100])
-            imgstr = request.data['b64Data']#.split(';base64,') 
-            ext = 'png'
-
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext) 
-            # i = Image()
-            # i.image=data
-            # i.save()
-
-            model_path = 'model.json'
-            # loaded_model = model_from_json(model_path)
-            # loaded_model.load_weights()
-            # #modify the placeholders with the real solutions
-            # i.response = my_response['response']
-            # i.soulutions = "placeholder_solutions",  #placeholder
-            # i.percentage = int(my_response['accuracy'])
-            # if request.user.is_authenticated:
-            #     i.user = request.user
-            # i.save()
-
-            # print(float(i.percentage), i.response)
-            # if float(i.percentage) < 85 and i.response == 'positive':
-            #     my_response['response'] = 'negative'
-            
-            # results = {
-            #     "response" : my_response['response'],
-            #     "solutions" : "placeholder_solutions",  #placeholder
-            #     "percentage" : my_response['accuracy']
-            # }
-            # print(results)
-            # return Response(results, status=200)
-        except:
-            traceback.print_exc()
-            results = {
-                "response" : 'error',
-                "solutions" : "placeholder_solutions",  #placeholder
-                "percentage" :  'error',
-                'result': traceback.format_exc()
-            }
-            return Response(results)
-
-class TestView(APIView):
-    
-    def get(self, request, *args, **kwargs):
-        print(request.user, request.data)
-        return Response({'test'}, status=200)
-
 class DailyFoodListView(APIView):
     
     #dalla request prendo il patient (request.user)
     def get(self, request, *args, **kwargs):
                 
-        print(User.objects.all())   
-        request_patient = self.request.query_params.get('patient')
-        request_day = self.request.query_params.get('day')
-        print('---request_day', request_day)
-        user = User.objects.get(username=request_patient)
-        patient = Patient.objects.get(user=User.objects.get(username=user.username))
-
-        print('---request_day', request_day)
-
-        # Faccio la query sul giorno e prendo i pasti con rispettivi cibi per quel giorno
-        DailyMeal = DailyMeal.objects.get(patient=patient, day_of_week=request_day)
+        try:
+            patient = Patient.objects.get(user=request.user)
+        except Patient.DoesNotExist:
+            return JsonResponse({"error": "Paziente non trovato"}, status=status.HTTP_404_NOT_FOUND)
         
-
-        diet_response = {
-            'dieta_giornaliera': str(patient) + ' - ' + str(request_day),
-            'meals': [
-            {
-                'meal': meal.name,
-                'foods': [
-                            {
-                            'food': str(food.name),
-                            'calories': str(food.calories),
-                            'substitute': str(get_substitute(food)['substitute']),
-                            'substitute_quantity': str(get_substitute(food)['quantity'])
-                            }
-                            for food in meal.foods.all()
-                        ]
-            
-            } for meal in DailyMeal.meals.all()
-            ] 
-        }
-
-        # json_str = json.dumps(diet_response)
-
-        # # Write the JSON string to a file
-        # with open('diet_response.json', 'w') as file:
-        #     file.write(json_str)
-        print(diet_response)
+        days_to_fetch = 20
+        today = datetime.datetime.now().date()
+        patient_program = PatientProgram.objects.filter(Q(start_date__lte=today) & Q(end_date__gte=today), patient=patient, is_active=True)
 
 
-        return JsonResponse(diet_response, safe=False)
+        return JsonResponse({}, safe=False)
 
 class FoodDetailsView(APIView):
 
@@ -145,23 +61,6 @@ class FoodDetailsView(APIView):
             'images': food.get_images.all(),
         })
     
-class addFood(APIView):
-    def get(self, request, *args, **kwargs):
-        request_patient = self.request.query_params.get('patient')
-        form = FoodForm()
-
-        return JsonResponse(form)
-    
-    def post(self, request, *args, **kwargs):
-        request_patient = self.request.query_params.get('patient')
-        form = FoodForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            return JsonResponse(data, status=200)
-        else:
-            data = form.errors.as_json()
-            return JsonResponse(data, status=400) 
-
 
 class AdvicesListView(APIView):
     

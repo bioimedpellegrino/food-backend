@@ -2,6 +2,7 @@ from random import choices
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from datetime import timedelta
 
 # Create your models here.
 
@@ -280,109 +281,125 @@ class Portion(models.Model):
     unity = models.CharField(max_length=255, choices=UNITY, default="g", null=True, blank=True)
     
     def __str__(self) -> str:
-        return self.name
+        return f"{float(round(self.quantity,2))} {self.unity} - {self.name} (KCAL:{self.total_kcal()}, C:{self.total_carbohydrates()}, P:{self.total_proteins()}, G:{self.total_fats()})"
+    
+    def to_json(self):
+        return {
+            "name": self.name,
+            "food": self.food.id,
+            "quantity": float(round(self.quantity, 2)),
+            "unity": self.unity,
+        }
+    
+    def to_json_short(self):
+        return {
+            "id": self.pk,
+            "name": self.name,
+            "quantity": float(round(self.quantity, 2)),
+            "unity": self.unity,
+        }
     
     def total_kcal(self):
-        return (self.food.kcal / 100) * self.quantity
+        return round((self.food.kcal / 100) * self.quantity, 2)
 
     def total_kj(self):
-        return (self.food.kj / 100) * self.quantity
+        return round((self.food.kj / 100) * self.quantity, 2)
 
     def total_carbohydrates(self):
-        return (self.food.carbohydrates / 100) * self.quantity
+        return round((self.food.carbohydrates / 100) * self.quantity, 2)
 
     def total_fats(self):
-        return (self.food.fats / 100) * self.quantity
+        return round((self.food.fats / 100) * self.quantity, 2)
 
     def total_proteins(self):
-        return (self.food.proteins / 100) * self.quantity
+        return round((self.food.proteins / 100) * self.quantity, 2)
 
     def total_water(self):
-        return (self.food.water / 100) * self.quantity
+        return round((self.food.water / 100) * self.quantity, 2) if self.food.water else 0
 
     def total_complex_carbohydrates(self):
-        return (self.food.complex_carbohydrates / 100) * self.quantity if self.food.complex_carbohydrates else 0
+        return round((self.food.complex_carbohydrates / 100) * self.quantity, 2) if self.food.complex_carbohydrates else 0
 
     def total_soluble_sugars(self):
-        return (self.food.soluble_sugars / 100) * self.quantity if self.food.soluble_sugars else 0
+        return round((self.food.soluble_sugars / 100) * self.quantity, 2) if self.food.soluble_sugars else 0
 
     def total_total_saturated_fats(self):
-        return (self.food.total_saturated_fats / 100) * self.quantity if self.food.total_saturated_fats else 0
+        return round((self.food.total_saturated_fats / 100) * self.quantity, 2) if self.food.total_saturated_fats else 0
 
     def total_total_monounsaturated_fats(self):
-        return (self.food.total_monounsaturated_fats / 100) * self.quantity if self.food.total_monounsaturated_fats else 0
+        return round((self.food.total_monounsaturated_fats / 100) * self.quantity, 2) if self.food.total_monounsaturated_fats else 0
 
     def total_total_polyunsaturated_fats(self):
-        return (self.food.total_polyunsaturated_fats / 100) * self.quantity if self.food.total_polyunsaturated_fats else 0
+        return round((self.food.total_polyunsaturated_fats / 100) * self.quantity, 2) if self.food.total_polyunsaturated_fats else 0
 
     def total_cholesterol(self):
-        return (self.food.cholesterol / 100) * self.quantity if self.food.cholesterol else 0
+        return round((self.food.cholesterol / 100) * self.quantity, 2) if self.food.cholesterol else 0
 
     def total_total_fiber(self):
-        return (self.food.total_fiber / 100) * self.quantity if self.food.total_fiber else 0
+        return round((self.food.total_fiber / 100) * self.quantity, 2) if self.food.total_fiber else 0
 
     def total_soluble_fiber(self):
-        return (self.food.soluble_fiber / 100) * self.quantity if self.food.soluble_fiber else 0
+        return round((self.food.soluble_fiber / 100) * self.quantity, 2) if self.food.soluble_fiber else 0
 
     def total_insoluble_fiber(self):
-        return (self.food.insoluble_fiber / 100) * self.quantity if self.food.insoluble_fiber else 0
+        return round((self.food.insoluble_fiber / 100) * self.quantity, 2) if self.food.insoluble_fiber else 0
 
     def total_alcohol(self):
-        return (self.food.alcohol / 100) * self.quantity if self.food.alcohol else 0
+        return round((self.food.alcohol / 100) * self.quantity, 2) if self.food.alcohol else 0
 
     def total_sodium(self):
-        return (self.food.sodium / 100) * self.quantity if self.food.sodium else 0
+        return round((self.food.sodium / 100) * self.quantity, 2) if self.food.sodium else 0
 
     def total_potassium(self):
-        return (self.food.potassium / 100) * self.quantity if self.food.potassium else 0
+        return round((self.food.potassium / 100) * self.quantity, 2) if self.food.potassium else 0
 
     def total_iron(self):
-        return (self.food.iron / 100) * self.quantity if self.food.iron else 0
+        return round((self.food.iron / 100) * self.quantity, 2) if self.food.iron else 0
 
     def total_calcium(self):
-        return (self.food.calcium / 100) * self.quantity
+        return round((self.food.calcium / 100) * self.quantity, 2) if self.food.calcium else 0
 
     def total_phosphorus(self):
-        return (self.food.phosphorus / 100) * self.quantity
+        return round((self.food.phosphorus / 100) * self.quantity, 2) if self.food.phosphorus else 0
 
     def total_magnesium(self):
-        return (self.food.magnesium / 100) * self.quantity
+        return round((self.food.magnesium / 100) * self.quantity, 2) if self.food.magnesium else 0
 
     def total_zinc(self):
-        return (self.food.zinc / 100) * self.quantity
+        return round((self.food.zinc / 100) * self.quantity, 2) if self.food.zinc else 0
 
     def total_copper(self):
-        return (self.food.copper / 100) * self.quantity
+        return round((self.food.copper / 100) * self.quantity, 2) if self.food.copper else 0
 
     def total_selenium(self):
-        return (self.food.selenium / 100) * self.quantity
+        return round((self.food.selenium / 100) * self.quantity, 2) if self.food.selenium else 0
 
     def total_thiamine_vitamin_b1(self):
-        return (self.food.thiamine_vitamin_b1 / 100) * self.quantity
+        return round((self.food.thiamine_vitamin_b1 / 100) * self.quantity, 2) if self.food.thiamine_vitamin_b1 else 0
 
     def total_riboflavin_vitamin_b2(self):
-        return (self.food.riboflavin_vitamin_b2 / 100) * self.quantity
+        return round((self.food.riboflavin_vitamin_b2 / 100) * self.quantity, 2) if self.food.riboflavin_vitamin_b2 else 0
 
     def total_niacin_vitamin_b3(self):
-        return (self.food.niacin_vitamin_b3 / 100) * self.quantity
+        return round((self.food.niacin_vitamin_b3 / 100) * self.quantity, 2) if self.food.niacin_vitamin_b3 else 0
 
     def total_vitamin_a_retinol_eq(self):
-        return (self.food.vitamin_a_retinol_eq / 100) * self.quantity
+        return round((self.food.vitamin_a_retinol_eq / 100) * self.quantity, 2) if self.food.vitamin_a_retinol_eq else 0
 
     def total_vitamin_c(self):
-        return (self.food.vitamin_c / 100) * self.quantity
+        return round((self.food.vitamin_c / 100) * self.quantity, 2) if self.food.vitamin_c else 0
 
     def total_vitamin_e(self):
-        return (self.food.vitamin_e / 100) * self.quantity
+        return round((self.food.vitamin_e / 100) * self.quantity, 2) if self.food.vitamin_e else 0
 
     def total_vitamin_b6(self):
-        return (self.food.vitamin_b6 / 100) * self.quantity
+        return round((self.food.vitamin_b6 / 100) * self.quantity, 2) if self.food.vitamin_b6 else 0
 
     def total_vitamin_b12(self):
-        return (self.food.vitamin_b12 / 100) * self.quantity
+        return round((self.food.vitamin_b12 / 100) * self.quantity, 2) if self.food.vitamin_b12 else 0
 
     def total_manganese(self):
-        return (self.food.manganese / 100) * self.quantity
+        return round((self.food.manganese / 100) * self.quantity, 2) if self.food.manganese else 0
     
     
     total_kcal.short_description = "Calorie totali (kcal)"
@@ -429,13 +446,25 @@ class Meal(models.Model):
     id = models.AutoField(primary_key=True)
     category = models.CharField(max_length=256, choices=MEALS, default='colazione')
     name = models.CharField(max_length=256, blank=True, null=True)
+    time = models.TimeField(blank=True, null=True)
     portions = models.ManyToManyField(Portion)
 
     def to_json(self):
         return {
-            'id': self.id,
-            'name': self.name,
-            'foods': self.foods
+            "id": self.id,
+            "name": self.name,
+            "portions": [portion.to_json() for portion in self.portions.all()]
+        }
+    
+    def to_list_element(self):
+        return {
+            "name": self.name,
+            "category": self.category,
+            "total_kcal": float(self.total_kcal()),
+            "total_carbohydrates": float(self.total_carbohydrates()),
+            "total_proteins": float(self.total_proteins()),
+            "total_fats": float(self.total_fats()),
+            "portions": [portion.to_json_short() for portion in self.portions.all()]
         }
 
     def __str__(self):
@@ -684,26 +713,48 @@ class Meal(models.Model):
         verbose_name = "Pasto"
         verbose_name_plural = "5. Pasti"
         
-class DailyMeal(models.Model):
+class DailyDiet(models.Model):
     # Dieta insieme di pasti, ex: colazione, pranzo, cena, merenda
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, blank=True, null=True)
-    day_of_week = models.CharField(max_length=20, choices=DAY_OF_WEEK, default="Lunedì")
-    time = models.TimeField(blank=True, null=True)
-    
     meals = models.ManyToManyField(Meal)
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'patient': self.patient,
-            'day_of_week': self.day_of_week,
-            'meals': self.meals
-        }
+    note = models.TextField(blank=True, null=True, default='')
+    # Not so elegant but efficient 
+    monday = models.BooleanField(default=False, verbose_name="Lunedì")
+    tuesday = models.BooleanField(default=False, verbose_name="Martedì")
+    wednesday = models.BooleanField(default=False, verbose_name="Mercoledì")
+    thursday = models.BooleanField(default=False, verbose_name="Giovedì")
+    friday = models.BooleanField(default=False, verbose_name="Venerdì")
+    saturday = models.BooleanField(default=False, verbose_name="Sabato")
+    sunday = models.BooleanField(default=False, verbose_name="Domenica")
 
     def __str__(self):
-        return self.name if self.name else ''
+        return f"{self.name}"
+    
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "note": self.note,
+            "monday": self.monday,
+            "tuesday": self.tuesday,
+            "wednesday": self.wednesday,
+            "thursday": self.thursday,
+            "friday": self.friday,
+            "saturday": self.saturday,
+            "sunday": self.sunday,
+            "meals": [meal.to_json for meal in self.meals.all()]
+        }
+    
+    def clone(self):
+        meals = self.meals.all()
+        self.id = None
+        self.save()
+
+        for item in meals:
+            self.meals.add(item)
+
+        self.save()
     
     def total_kcal(self):
         total_kcal = 0
@@ -945,15 +996,15 @@ class DailyMeal(models.Model):
     total_manganese.short_description = "Manganese totale (mg)"
 
     class Meta:
-        verbose_name = "Pasto giornaliero"
-        verbose_name_plural = "6. Pasti giornalieri"
+        verbose_name = "Dieta giornaliera"
+        verbose_name_plural = "6. Diete giornaliere"
 
 class PatientProgram(models.Model):
 
     id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, blank=True, null=True, on_delete=models.SET_NULL)
     is_active = models.BooleanField(default=False)
-    daily_meals = models.ManyToManyField(DailyMeal)
+    daily_meals = models.ManyToManyField(DailyDiet)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 
@@ -969,9 +1020,62 @@ class PatientProgram(models.Model):
         }
 
     def __str__(self):
-        return f"{self.patient}" 
+        return f"{self.patient}"
+    
+    def get_ordered_meals(self, start_date, end_date):
+        
+        ordered_meals = {}
+        delta = end_date - start_date
+        meals = self.daily_meals.all()
+        for i in range(delta.days + 1):
+            current_date = start_date + timedelta(days=i)
+            daily_diet = meals.filter(**{current_date.strftime("%A").lower(): True}).first()
+
+            if daily_diet:
+                # If a daily diet is found, add it to the ordered meals dictionary
+                ordered_meals[current_date.strftime("%Y/%m/%d")] = [meal.to_list_element() for meal in daily_diet.meals.all()]
+            else:
+                # If no daily diet is found, add an empty list to indicate no meals for the day
+                ordered_meals[current_date] = []
+
+        return ordered_meals
+    
+    def monday(self):
+        monday_diet = self.daily_meals.filter(monday=True).first()        
+        return monday_diet.name
+    
+    def tuesday(self):
+        tuesday_diet = self.daily_meals.filter(tuesday=True).first()
+        return tuesday_diet.name
+
+    def wednesday(self):
+        wednesday_diet = self.daily_meals.filter(wednesday=True).first()
+        return wednesday_diet.name
+
+    def thursday(self):
+        thursday_diet = self.daily_meals.filter(thursday=True).first()
+        return thursday_diet.name
+
+    def friday(self):
+        friday_diet = self.daily_meals.filter(friday=True).first()
+        return friday_diet.name
+
+    def saturday(self):
+        saturday_diet = self.daily_meals.filter(saturday=True).first()
+        return saturday_diet.name
+
+    def sunday(self):
+        sunday_diet = self.daily_meals.filter(sunday=True).first()
+        return sunday_diet.name
     
     
+    monday.short_description = "Dieta del Lunedì"
+    tuesday.short_description = "Dieta del Martedì"
+    wednesday.short_description = "Dieta del Mercoledì"
+    thursday.short_description = "Dieta del Giovedì"
+    friday.short_description = "Dieta del Venerdì"
+    saturday.short_description = "Dieta del Sabato"
+    sunday.short_description = "Dieta della Domenica"
 
     class Meta:
         verbose_name = "Programma"
