@@ -151,6 +151,7 @@ class PatientProgramAdmin(admin.ModelAdmin):
         'saturday',
         'sunday'
     ]
+    list_display = ['patient', 'start_date', 'end_date']
     
 admin.site.register(Patient)
 admin.site.register(Food, FoodAdmin)
