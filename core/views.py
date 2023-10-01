@@ -29,12 +29,15 @@ class DailyFoodListView(APIView):
         except Patient.DoesNotExist:
             return JsonResponse({"error": "Paziente non trovato"}, status=status.HTTP_404_NOT_FOUND)
         
-        days_to_fetch = 20
-        today = datetime.datetime.now().date()
-        patient_program = PatientProgram.objects.filter(Q(start_date__lte=today) & Q(end_date__gte=today), patient=patient, is_active=True)
-
-
-        return JsonResponse({}, safe=False)
+        days_to_fetch = 10
+        
+        start_date = datetime.datetime.now().date()
+        end_date = start_date + datetime.timedelta(days=days_to_fetch)
+        patient_program = PatientProgram.objects.filter(Q(start_date__lte=start_date) & Q(end_date__gte=start_date), patient=patient, is_active=True).first()
+        
+        results = patient_program.get_ordered_meals(start_date, end_date)
+        
+        return JsonResponse(results, safe=False)
 
 class FoodDetailsView(APIView):
 
