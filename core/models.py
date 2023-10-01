@@ -468,7 +468,7 @@ class Meal(models.Model):
         }
 
     def __str__(self):
-        return f"{self.name} KCAL: {self.total_kcal()}"
+        return f"{self.name}"
             
     def total_kcal(self):
         total_kcal = 0
