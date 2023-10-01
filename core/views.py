@@ -35,7 +35,7 @@ class DailyFoodListView(APIView):
         end_date = start_date + datetime.timedelta(days=days_to_fetch)
         patient_program = PatientProgram.objects.filter(Q(start_date__lte=start_date) & Q(end_date__gte=start_date), patient=patient, is_active=True).first()
         
-        results = patient_program.get_ordered_meals(start_date, end_date)
+        results = patient_program.get_ordered_meals(start_date, end_date) if patient_program else []
         
         return JsonResponse(results, safe=False)
 
