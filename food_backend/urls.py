@@ -22,6 +22,6 @@ urlpatterns = [
     path('api/v1/core/', include('core.urls')),
     
     # Restapi urls
-    path('api/v1/rest-auth/', include('rest_auth.urls')),
-    path('api/v1/rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('api/v1/rest-auth/', include('dj_rest_auth.urls')),
+    path('api/v1/rest-auth/registration/', include('dj_rest_auth.urls')),
 ]
