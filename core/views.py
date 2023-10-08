@@ -19,6 +19,30 @@ from .utils import *
 import json
 import datetime
 
+class DailyFoodView(APIView):
+    
+    #dalla request prendo il patient (request.user)
+    def get(self, request, *args, **kwargs):
+                
+        try:
+            patient = Patient.objects.get(user=request.user)
+        except Patient.DoesNotExist:
+            return JsonResponse({"error": "Paziente non trovato"}, status=status.HTTP_404_NOT_FOUND)
+        
+        diet_date = request.GET.get("date", None)
+        
+        response = []
+        
+        if diet_date:
+        
+            diet_date = datetime.datetime.strptime(diet_date, "%Y/%m/%d")
+            today_date = datetime.datetime.now().date()
+            patient_program = PatientProgram.objects.filter(Q(start_date__lte=today_date) & Q(end_date__gte=today_date), patient=patient, is_active=True).first()
+            
+            response = patient_program.get_date_meals(diet_date) if patient_program else []
+            
+        return JsonResponse(response, safe=False)
+
 class DailyFoodListView(APIView):
     
     #dalla request prendo il patient (request.user)
@@ -31,11 +55,11 @@ class DailyFoodListView(APIView):
         
         days_to_fetch = 10
         
-        start_date = datetime.datetime.now().date()
-        end_date = start_date + datetime.timedelta(days=days_to_fetch)
-        patient_program = PatientProgram.objects.filter(Q(start_date__lte=start_date) & Q(end_date__gte=start_date), patient=patient, is_active=True).first()
+        today_date = datetime.datetime.now().date()
+        end_date = today_date + datetime.timedelta(days=days_to_fetch)
+        patient_program = PatientProgram.objects.filter(Q(start_date__lte=today_date) & Q(end_date__gte=today_date), patient=patient, is_active=True).first()
         
-        results = patient_program.get_ordered_meals(start_date, end_date) if patient_program else []
+        results = patient_program.get_ordered_meals(today_date, end_date) if patient_program else []
         
         return JsonResponse(results, safe=False)
 

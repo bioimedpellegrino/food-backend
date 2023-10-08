@@ -1022,6 +1022,14 @@ class PatientProgram(models.Model):
     def __str__(self):
         return f"{self.patient}"
     
+    def get_date_meals(self, diet_date):
+        meals = self.daily_meals.all()
+        daily_diet = meals.filter(**{diet_date.strftime("%A").lower(): True}).first()
+        if daily_diet:
+            return [meal.to_list_element() for meal in daily_diet.meals.all()]
+        else:
+            return []
+        
     def get_ordered_meals(self, start_date, end_date):
         
         ordered_meals = {}
