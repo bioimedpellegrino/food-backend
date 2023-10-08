@@ -65,7 +65,7 @@ class DailyFoodListView(APIView):
 
 class FoodDetailsView(APIView):
 
-    def get(request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
 
