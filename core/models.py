@@ -458,6 +458,7 @@ class Meal(models.Model):
     
     def to_list_element(self):
         return {
+            "id": self.id,
             "name": self.name,
             "category": self.category,
             "total_kcal": float(self.total_kcal()),
