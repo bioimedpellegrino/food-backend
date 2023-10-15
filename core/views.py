@@ -1,27 +1,21 @@
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from django.contrib.auth import authenticate, login, logout
+from rest_framework.permissions import IsAuthenticated
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Q
-from .models import Patient, Food, DailyDiet, Meal, PatientProgram, FoodSubstitute, Advice
+from .models import Patient, Food, PatientProgram, FoodSubstitute, Advice
 from .forms import *
-import numpy as np
-import traceback
-from django.core.files.base import ContentFile
-import base64
 from .utils import *
-import json
 import datetime
 
 class DailyFoodView(APIView):
     
-    #dalla request prendo il patient (request.user)
+    permission_classes = (IsAuthenticated,)
+    
     def get(self, request, *args, **kwargs):
                 
         try:
@@ -45,7 +39,8 @@ class DailyFoodView(APIView):
 
 class DailyFoodListView(APIView):
     
-    #dalla request prendo il patient (request.user)
+    permission_classes = (IsAuthenticated,)
+    
     def get(self, request, *args, **kwargs):
                 
         try:
@@ -65,6 +60,8 @@ class DailyFoodListView(APIView):
 
 class FoodDetailsView(APIView):
 
+    permission_classes = (IsAuthenticated,)
+    
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
@@ -88,8 +85,21 @@ class FoodDetailsView(APIView):
             'images': food.get_images.all(),
         })
     
+class MealMicronutrientsView(APIView):
+    
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request, *args, **kwargs):
+        
+        meal_id = kwargs.get("id")
+        meal = Meal.objects.get(pk=meal_id)
+        response = meal.get_micronutrients()
+        return JsonResponse(response, safe=False) 
+        
 
 class AdvicesListView(APIView):
+    
+    permission_classes = (IsAuthenticated,)
     
     def get(self, request, *args, **kwargs):
         

@@ -467,6 +467,39 @@ class Meal(models.Model):
             "total_fats": float(self.total_fats()),
             "portions": [portion.to_json_short() for portion in self.portions.all()]
         }
+    
+    def get_micronutrients(self):
+        return {
+            "total_water": self.total_water(),
+            "total_complex_carbohydrates": self.total_complex_carbohydrates(),
+            "total_soluble_sugars": self.total_soluble_sugars(),
+            "total_total_saturated_fats": self.total_total_saturated_fats(),
+            "total_total_monounsaturated_fats": self.total_total_monounsaturated_fats(),
+            "total_total_polyunsaturated_fats": self.total_total_polyunsaturated_fats(),
+            "total_cholesterol": self.total_cholesterol(),
+            "total_total_fiber": self.total_total_fiber(),
+            "total_soluble_fiber": self.total_soluble_fiber(),
+            "total_insoluble_fiber": self.total_insoluble_fiber(),
+            "total_alcohol": self.total_alcohol(),
+            "total_sodium": self.total_sodium(),
+            "total_potassium": self.total_potassium(),
+            "total_iron": self.total_iron(),
+            "total_calcium": self.total_calcium(),
+            "total_phosphorus": self.total_phosphorus(),
+            "total_magnesium": self.total_magnesium(),
+            "total_zinc": self.total_zinc(),
+            "total_copper": self.total_copper(),
+            "total_selenium": self.total_selenium(),
+            "total_thiamine_vitamin_b1": self.total_thiamine_vitamin_b1(),
+            "total_riboflavin_vitamin_b2": self.total_riboflavin_vitamin_b2(),
+            "total_niacin_vitamin_b3": self.total_niacin_vitamin_b3(),
+            "total_vitamin_a_retinol_eq": self.total_vitamin_a_retinol_eq(),
+            "total_vitamin_c": self.total_vitamin_c(),
+            "total_vitamin_e": self.total_vitamin_e(),
+            "total_vitamin_b6": self.total_vitamin_b6(),
+            "total_vitamin_b12": self.total_vitamin_b12(),
+            "total_manganese": self.total_manganese(),
+        }
 
     def __str__(self):
         return f"{self.name}"
