@@ -1,5 +1,5 @@
 from django.contrib import admin
-from. models import Patient, Food, DailyDiet, Meal, PatientProgram, FoodSubstitute, Advice, Portion
+from. models import Patient, Food, DailyDiet, Meal, PatientProgram, FoodSubstitute, Advice, Portion, WeightMeasure
 
 # Register your models here.
 
@@ -152,7 +152,10 @@ class PatientProgramAdmin(admin.ModelAdmin):
         'sunday'
     ]
     list_display = ['patient', 'start_date', 'end_date']
-    
+
+class WeightMeasureAdmin(admin.ModelAdmin):
+    list_filter = ['patient']
+
 admin.site.register(Patient)
 admin.site.register(Food, FoodAdmin)
 admin.site.register(DailyDiet, DailyMealAdmin)
@@ -161,3 +164,4 @@ admin.site.register(PatientProgram, PatientProgramAdmin)
 admin.site.register(FoodSubstitute)
 admin.site.register(Advice)
 admin.site.register(Portion, PortionAdmin)
+admin.site.register(WeightMeasure, WeightMeasureAdmin)

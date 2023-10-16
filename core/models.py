@@ -85,7 +85,7 @@ class WeightMeasure(models.Model):
     
     class Meta:
         verbose_name = 'Pesata'
-        verbose_name_plural = '2. Pesate'
+        verbose_name_plural = '10. Pesate'
 
 class Food(models.Model):
     
