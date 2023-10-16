@@ -77,11 +77,11 @@ class WeightMeasure(models.Model):
     
     id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    weight = models.DecimalField(max_digits=7, decimal_places=4)
+    weight = models.DecimalField(blank=True, null=True, max_digits=7, decimal_places=4)
     entry_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return f'{self.patient.username} - {self.weight} Kg in data {self.entry_date}'
+        return f'{self.patient.user.username} - {self.weight} Kg in data {self.entry_date}'
     
     class Meta:
         verbose_name = 'Pesata'

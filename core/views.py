@@ -117,15 +117,17 @@ class WeightMeasureView(APIView):
         
         try: 
             
-            weight_log = WeightMeasure()
+            weight_log, cre = WeightMeasure.objects.get_or_create(patient=patient, entry_date=request.data["entry_date"])
             weight_log.patient = patient
             weight_log.weight = request.data["weight"]
             weight_log.entry_date = request.data["entry_date"]
-            weight_log.save
+            weight_log.save()
             
             return JsonResponse({"status_code": 200}, safe=False)
         
         except:
+            import traceback
+            traceback.print_exc()
             return JsonResponse({"status_code": 500}, safe=False)
         
         
