@@ -155,6 +155,7 @@ class PatientProgramAdmin(admin.ModelAdmin):
 
 class WeightMeasureAdmin(admin.ModelAdmin):
     list_filter = ['patient']
+    list_display = ['patient', 'weight', 'entry_date']
 
 admin.site.register(Patient)
 admin.site.register(Food, FoodAdmin)
