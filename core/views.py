@@ -96,7 +96,40 @@ class MealMicronutrientsView(APIView):
         response = meal.get_micronutrients()
         return JsonResponse(response, safe=False) 
         
+class WeightMeasureView(APIView):
+    
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request, *args, **kwargs):
+        
+        patient = Patient.objects.get(user=request.user)
+        weight_logs = WeightMeasure.objects.filter(patient=patient).order_by("entry_date")
+        response = [ {"weight": weight_log.weight, "entry_date": weight_log.entry_date} for weight_log in weight_logs]
+        
+        return JsonResponse(response, safe=False)
 
+    def post(self, request, *args, **kwargs):
+        
+        try:
+            patient = Patient.objects.get(user=request.user)
+        except Patient.DoesNotExist:
+            return JsonResponse({"status_code": 404, "error": "Paziente non trovato"}, safe=False)
+        
+        try: 
+            
+            weight_log = WeightMeasure()
+            weight_log.patient = patient
+            weight_log.weight = request.data["weight"]
+            weight_log.entry_date = request.data["entry_date"]
+            weight_log.save
+            
+            return JsonResponse({"status_code": 200}, safe=False)
+        
+        except:
+            return JsonResponse({"status_code": 500}, safe=False)
+        
+        
+        
 class AdvicesListView(APIView):
     
     permission_classes = (IsAuthenticated,)
