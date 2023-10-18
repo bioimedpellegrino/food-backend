@@ -139,13 +139,13 @@ class GetLogWeightData(APIView):
         patient = Patient.objects.get(user=request.user)
         current_year = datetime.datetime.now().year
         weight_logs = WeightMeasure.objects.filter(patient=patient, entry_date__year=current_year)
-        result_data = []
+        result_data = {}
         monthly_avg = weight_logs.values('entry_date__month').annotate(avg_weight=Avg('weight'))
 
         for month_data in monthly_avg:
             month_number = month_data['entry_date__month'] - 1
             avg_weight = round(month_data['avg_weight'])
-            result_data.append({'x': month_number, 'y': avg_weight})
+            result_data[month_number] = avg_weight
             
         return JsonResponse(result_data, safe=False)
            
