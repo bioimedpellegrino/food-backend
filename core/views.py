@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.db.models import Q
+from django.db.models import Q, Avg
 from .models import Patient, Food, PatientProgram, FoodSubstitute, Advice
 from .forms import *
 from .utils import *
@@ -130,7 +130,25 @@ class WeightMeasureView(APIView):
             traceback.print_exc()
             return JsonResponse({"status_code": 500}, safe=False)
         
+class GetLogWeightData(APIView):
+
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request, *args, **kwargs):
         
+        patient = Patient.objects.get(user=request.user)
+        current_year = datetime.datetime.now().year
+        weight_logs = WeightMeasure.objects.filter(patient=patient, entry_date__year=current_year).order_by("entry_date")
+        result_data = []
+        monthly_avg = weight_logs.values('entry_date__month').annotate(avg_weight=Avg('weight'))
+
+        for month_data in monthly_avg:
+            month_number = month_data['entry_date__month'] - 1
+            avg_weight = round(month_data['avg_weight'])
+            result_data.append({'x': month_number, 'y': avg_weight})
+            
+        return JsonResponse(result_data, safe=False)
+           
         
 class AdvicesListView(APIView):
     
