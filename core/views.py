@@ -158,7 +158,7 @@ class PatientView(APIView):
         
         try:
             try:
-                patient = Patient.objects.get(patient=request.user)
+                patient = Patient.objects.get(user=request.user)
             except Patient.DoesNotExist:
                 return JsonResponse({"message": "Not found"}, safe=False, status=status.HTTP_404_NOT_FOUND)
             response = patient.to_json()
@@ -172,7 +172,7 @@ class PatientView(APIView):
         
         try:
             try:
-                patient = Patient.objects.get(patient=request.user)
+                patient = Patient.objects.get(user=request.user)
             except Patient.DoesNotExist:
                 return JsonResponse({"message": "Not found"}, safe=False, status=status.HTTP_404_NOT_FOUND)
                         
