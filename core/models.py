@@ -72,12 +72,12 @@ class Patient(models.Model):
             "name": self.name,
             "surname": self.surname,
             "birth_date": self.birth_date,
-            "email": self.email,
-            "phone_prefix": self.phone_prefix,
-            "phone": self.phone,
-            "height": self.height,
-            "weight": self.weight,
-            "gender": self.gender
+            "email": self.email if self.email else "",
+            "phone_prefix": self.phone_prefix if self.phone_prefix else "",
+            "phone": self.phone if self.phone else "",
+            "height": self.height if self.height else 0,
+            "weight": self.weight if self.weight else 0,
+            "gender": self.gender if self.gender else ""
         }
 
     class Meta:
