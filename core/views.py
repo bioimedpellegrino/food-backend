@@ -176,15 +176,15 @@ class PatientView(APIView):
             except Patient.DoesNotExist:
                 return JsonResponse({"message": "Not found"}, safe=False, status=status.HTTP_404_NOT_FOUND)
                         
-            patient.name = request.data['name']
-            patient.surname = request.data['surname']
-            patient.birth_date = request.data['birth_date']
-            patient.email = request.data['email']
-            patient.phone_prefix = request.data['phone_prefix']
-            patient.phone = request.data['phone']
-            patient.height = request.data['height']
-            patient.weight = request.data['weight']
-            patient.gender = request.data['gender']
+            patient.name = request.data['name'] if 'name' in request.data else patient.name
+            patient.surname = request.data['surname'] if 'surname' in request.data else patient.surname
+            patient.birth_date = request.data['birth_date'] if 'birth_date' in request.data else patient.birth_date
+            patient.email = request.data['email'] if 'email' in request.data else patient.email
+            patient.phone_prefix = request.data['phone_prefix'] if 'phone_prefix' in request.data else patient.phone_prefix
+            patient.phone = request.data['phone'] if 'phone' in request.data else patient.phone
+            patient.height = request.data['height'] if 'height' in request.data else patient.height
+            patient.weight = request.data['weight'] if 'weight' in request.data else patient.weight
+            patient.gender = request.data['gender'] if 'gender' in request.data else patient.gender
             
             patient.save()
             
