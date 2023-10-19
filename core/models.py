@@ -77,7 +77,7 @@ class Patient(models.Model):
             "phone_prefix": self.phone_prefix if self.phone_prefix else "",
             "phone": self.phone if self.phone else "",
             "height": self.height if self.height else 0,
-            "weight": self.weight if self.weight else 0,
+            "weight": float(self.weight) if self.weight else 0,
             "gender": self.gender if self.gender else ""
         }
 
