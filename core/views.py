@@ -164,6 +164,8 @@ class PatientView(APIView):
             response = patient.to_json()
             return JsonResponse(response, safe=False, status=status.HTTP_200_OK)
         except:
+            import traceback
+            traceback.print_exc()
             return JsonResponse({"message": "Generic error"}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def post(self, request, *args, **kwargs):
