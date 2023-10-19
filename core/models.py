@@ -71,6 +71,7 @@ class Patient(models.Model):
             "id": self.id,
             "name": self.name,
             "surname": self.surname,
+            "username": self.user.username,
             "birth_date": self.birth_date,
             "email": self.email if self.email else "",
             "phone_prefix": self.phone_prefix if self.phone_prefix else "",
