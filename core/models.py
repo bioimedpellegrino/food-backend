@@ -72,7 +72,7 @@ class Patient(models.Model):
             "name": self.name,
             "surname": self.surname,
             "username": self.user.username,
-            "birth_date": self.birth_date,
+            "birth_date": self.birth_date.strftime("%Y/%m/%d") if self.birth_date else "",
             "email": self.email if self.email else "",
             "phone_prefix": self.phone_prefix if self.phone_prefix else "",
             "phone": self.phone if self.phone else "",
