@@ -149,6 +149,46 @@ class GetLogWeightData(APIView):
             
         return JsonResponse(result_data, safe=False)
            
+
+class PatientView(APIView):
+    
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self, request, *args, **kwargs):
+        
+        try:
+            try:
+                patient = Patient.objects.get(patient=request.user)
+            except Patient.DoesNotExist:
+                return JsonResponse({"message": "Not found"}, safe=False, status=status.HTTP_404_NOT_FOUND)
+            response = patient.to_json()
+            return JsonResponse(response, safe=False, status=status.HTTP_200_OK)
+        except:
+            return JsonResponse({"message": "Generic error"}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def post(self, request, *args, **kwargs):
+        
+        try:
+            try:
+                patient = Patient.objects.get(patient=request.user)
+            except Patient.DoesNotExist:
+                return JsonResponse({"message": "Not found"}, safe=False, status=status.HTTP_404_NOT_FOUND)
+                        
+            patient.name = request.data['name']
+            patient.surname = request.data['surname']
+            patient.birth_date = request.data['birth_date']
+            patient.email = request.data['email']
+            patient.phone_prefix = request.data['phone_prefix']
+            patient.phone = request.data['phone']
+            patient.height = request.data['height']
+            patient.weight = request.data['weight']
+            patient.gender = request.data['gender']
+            
+            patient.save()
+            
+            return JsonResponse({"message": "ok"}, safe=False, status=status.HTTP_200_OK)
+        except:
+            return JsonResponse({"message": "Generic error"}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class AdvicesListView(APIView):
     

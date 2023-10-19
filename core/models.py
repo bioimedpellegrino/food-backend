@@ -56,17 +56,28 @@ class Patient(models.Model):
     name = models.CharField(max_length=256, blank=True, null=True)
     surname = models.CharField(max_length=256, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
+    email = models.CharField(max_length=256, blank=True, null=True)
+    phone_prefix = models.CharField(max_length=256, blank=True, null=True)
+    phone = models.CharField(max_length=256, blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+    weight = models.DecimalField(blank=True, null=True, max_digits=7, decimal_places=4)
+    gender = models.CharField(max_length=2, blank=True, null=True)
     
     def __str__(self):
         return f"{self.name} {self.surname}"
     
     def to_json(self):
         return {
-            'id': self.id,
-            'user': self.user,
-            'name': self.name,
-            'surname': self.surname,
-            'birth_date': self.birth_date
+            "id": self.id,
+            "name": self.name,
+            "surname": self.surname,
+            "birth_date": self.birth_date,
+            "email": self.email,
+            "phone_prefix": self.phone_prefix,
+            "phone": self.phone,
+            "height": self.height,
+            "weight": self.weight,
+            "gender": self.gender
         }
 
     class Meta:
