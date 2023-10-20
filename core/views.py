@@ -190,6 +190,8 @@ class PatientView(APIView):
             
             return JsonResponse({"message": "ok"}, safe=False, status=status.HTTP_200_OK)
         except:
+            import traceback
+            traceback.print_exc()
             return JsonResponse({"message": "Generic error"}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class AdvicesListView(APIView):
