@@ -178,7 +178,7 @@ class PatientView(APIView):
                         
             patient.name = request.data['name'] if 'name' in request.data else patient.name
             patient.surname = request.data['surname'] if 'surname' in request.data else patient.surname
-            patient.birth_date = request.data['birth_date'] if 'birth_date' in request.data else patient.birth_date
+            patient.birth_date = datetime.strptime(request.data['birth_date'], "'%d/%m/%y") if 'birth_date' in request.data else patient.birth_date
             patient.email = request.data['email'] if 'email' in request.data else patient.email
             patient.phone_prefix = request.data['phone_prefix'] if 'phone_prefix' in request.data else patient.phone_prefix
             patient.phone = request.data['phone'] if 'phone' in request.data else patient.phone
